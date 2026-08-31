@@ -79,7 +79,7 @@ function LoginPigatto() {
     <div className="grid min-h-screen lg:grid-cols-2">
       <div className="relative hidden flex-col justify-between bg-sidebar p-12 lg:flex">
         <div className="flex items-center gap-3">
-          <img src="/logo.svg" alt="" className="size-11 shrink-0" />
+          <img src="/logo-symbol.png" alt="" className="size-11 shrink-0" />
           <div>
             <div className="font-display text-2xl font-bold text-sidebar-accent-foreground">
               LAB <span className="text-sidebar-primary">PIGATTO</span>
@@ -106,7 +106,7 @@ function LoginPigatto() {
       <div className="flex items-center justify-center p-6">
         <div className="w-full max-w-sm">
           <div className="mb-8 flex items-center gap-2.5 lg:hidden">
-            <img src="/logo.svg" alt="" className="size-9 shrink-0" />
+            <img src="/logo-symbol.png" alt="" className="size-9 shrink-0" />
             <div>
               <div className="font-display text-xl font-bold">
                 LAB <span className="text-primary">PIGATTO</span>
