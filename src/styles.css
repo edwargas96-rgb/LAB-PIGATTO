@@ -1,0 +1,279 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * LAB PIGATTO — design system clínico.
+ * Fundo porcelana, superfícies brancas, teal clínico como cor principal.
+ */
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+  --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-heading: "Archivo", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-soft: var(--primary-soft);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-danger: var(--danger);
+  --color-danger-foreground: var(--danger-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-ring-offset-background: var(--background);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --shadow-card: 0 1px 2px oklch(0.246 0.021 235 / 6%), 0 8px 24px oklch(0.246 0.021 235 / 6%);
+  --shadow-raised: 0 2px 6px oklch(0.246 0.021 235 / 8%), 0 16px 40px oklch(0.246 0.021 235 / 10%);
+}
+
+:root {
+  --radius: 0.75rem;
+  --background: oklch(0.951 0.005 220);
+  --foreground: oklch(0.246 0.021 235);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.246 0.021 235);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.246 0.021 235);
+  --primary: oklch(0.56 0.15 234);
+  --primary-foreground: oklch(0.99 0.005 200);
+  --primary-hover: oklch(0.48 0.14 234);
+  --primary-soft: oklch(0.95 0.04 234);
+  --secondary: oklch(0.965 0.006 220);
+  --secondary-foreground: oklch(0.246 0.021 235);
+  --muted: oklch(0.962 0.006 220);
+  --muted-foreground: oklch(0.5 0.021 225);
+  --accent: oklch(0.95 0.04 234);
+  --accent-foreground: oklch(0.48 0.14 234);
+  --destructive: oklch(0.53 0.19 27);
+  --destructive-foreground: oklch(0.99 0.005 200);
+  --success: oklch(0.55 0.12 162);
+  --success-foreground: oklch(0.99 0.005 200);
+  --warning: oklch(0.72 0.15 72);
+  --warning-foreground: oklch(0.25 0.05 60);
+  --danger: oklch(0.53 0.19 27);
+  --danger-foreground: oklch(0.99 0.005 200);
+  --border: oklch(0.9 0.008 220);
+  --input: oklch(0.9 0.008 220);
+  --ring: oklch(0.57 0.15 234);
+  --chart-1: oklch(0.57 0.15 234);
+  --chart-2: oklch(0.55 0.12 162);
+  --chart-3: oklch(0.72 0.15 72);
+  --chart-4: oklch(0.53 0.19 27);
+  --chart-5: oklch(0.5 0.021 225);
+  --sidebar: oklch(0.28 0.032 218);
+  --sidebar-foreground: oklch(0.93 0.008 220);
+  --sidebar-primary: oklch(0.72 0.15 234);
+  --sidebar-primary-foreground: oklch(0.15 0.02 235);
+  --sidebar-accent: oklch(0.35 0.038 210);
+  --sidebar-accent-foreground: oklch(0.98 0.005 200);
+  --sidebar-border: oklch(0.36 0.03 215);
+  --sidebar-ring: oklch(0.72 0.15 234);
+}
+
+.dark {
+  --background: oklch(0.2 0.022 235);
+  --foreground: oklch(0.95 0.006 220);
+  --card: oklch(0.26 0.026 232);
+  --card-foreground: oklch(0.95 0.006 220);
+  --popover: oklch(0.26 0.026 232);
+  --popover-foreground: oklch(0.95 0.006 220);
+  --primary: oklch(0.68 0.14 234);
+  --primary-foreground: oklch(0.16 0.02 235);
+  --primary-hover: oklch(0.76 0.14 234);
+  --primary-soft: oklch(0.32 0.04 200);
+  --secondary: oklch(0.3 0.026 232);
+  --secondary-foreground: oklch(0.95 0.006 220);
+  --muted: oklch(0.3 0.026 232);
+  --muted-foreground: oklch(0.72 0.015 225);
+  --accent: oklch(0.32 0.04 200);
+  --accent-foreground: oklch(0.9 0.05 234);
+  --destructive: oklch(0.63 0.18 27);
+  --destructive-foreground: oklch(0.99 0.005 200);
+  --success: oklch(0.65 0.12 162);
+  --success-foreground: oklch(0.16 0.02 235);
+  --warning: oklch(0.78 0.14 72);
+  --warning-foreground: oklch(0.2 0.04 60);
+  --danger: oklch(0.63 0.18 27);
+  --danger-foreground: oklch(0.99 0.005 200);
+  --border: oklch(1 0 0 / 12%);
+  --input: oklch(1 0 0 / 16%);
+  --ring: oklch(0.68 0.14 234);
+  --chart-1: oklch(0.68 0.14 234);
+  --chart-2: oklch(0.65 0.12 162);
+  --chart-3: oklch(0.78 0.14 72);
+  --chart-4: oklch(0.63 0.18 27);
+  --chart-5: oklch(0.72 0.015 225);
+  --sidebar: oklch(0.24 0.026 232);
+  --sidebar-foreground: oklch(0.93 0.008 220);
+  --sidebar-primary: oklch(0.68 0.14 234);
+  --sidebar-primary-foreground: oklch(0.16 0.02 235);
+  --sidebar-accent: oklch(0.32 0.03 215);
+  --sidebar-accent-foreground: oklch(0.98 0.005 200);
+  --sidebar-border: oklch(1 0 0 / 12%);
+  --sidebar-ring: oklch(0.68 0.14 234);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    letter-spacing: -0.01em;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+}
+
+@utility numeric {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/*
+ * FOTO PATRIOTA — landing page (rota /patriota).
+ * Paleta escopada em .fp-scope para não interferir no design system clínico.
+ * Verde/amarelo/azul da bandeira, mobile-first, coluna única.
+ */
+.fp-scope {
+  --primary: #0a7d3c;
+  --primary-foreground: #ffffff;
+  --accent: #e8b713;
+  --accent-foreground: #123324;
+  --card: #ffffff;
+  --card-foreground: #0f1e16;
+  --foreground: #0f1e16;
+  --muted: #f2f5ee;
+  --muted-foreground: #7a897f;
+  --border: #e4e8dd;
+  --color-navy: #122b6b;
+  font-family: "Hanken Grotesk", ui-sans-serif, system-ui, sans-serif;
+}
+
+.fp-tricolor {
+  background: linear-gradient(90deg, #0a7d3c 0 34%, #e8b713 34% 67%, #122b6b 67% 100%);
+}
+
+@keyframes fpUp {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── FOTO PATRIOTA: animações e toques patrióticos ────────────────── */
+
+/* Revela seções ao rolar a página */
+.fp-reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+.fp-reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Botões com toque (aperta ao clicar) */
+.fp-btn {
+  transition: transform 0.12s ease, filter 0.18s ease, box-shadow 0.2s ease;
+}
+.fp-btn:active {
+  transform: scale(0.97);
+}
+
+/* Brilho que passa no botão principal */
+.fp-cta {
+  position: relative;
+  overflow: hidden;
+}
+.fp-cta::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -70%;
+  width: 45%;
+  height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.38), transparent);
+  transform: skewX(-20deg);
+  animation: fpSheen 3.4s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes fpSheen {
+  0%, 55% { left: -70%; }
+  100% { left: 140%; }
+}
+
+/* Barrinha tricolor de destaque nos títulos das seções */
+.fp-accent {
+  display: block;
+  width: 38px;
+  height: 4px;
+  border-radius: 2px;
+  margin-bottom: 10px;
+  background: linear-gradient(90deg, #0a7d3c 0 34%, #e8b713 34% 67%, #122b6b 67% 100%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fp-reveal { opacity: 1; transform: none; transition: none; }
+  .fp-cta::after { animation: none; display: none; }
+}
