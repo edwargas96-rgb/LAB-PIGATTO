@@ -52,30 +52,12 @@ function Login() {
 
   return (
     <div className="grid min-h-screen lg:grid-cols-2">
-      <div className="relative hidden flex-col justify-between bg-sidebar p-12 lg:flex">
-        <div className="flex items-center gap-3">
-          <img src="/logo-symbol.png" alt="" className="size-11 shrink-0" />
-          <div>
-            <div className="font-display text-2xl font-bold text-sidebar-accent-foreground">
-              LAB <span className="text-sidebar-primary">PIGATTO</span>
-            </div>
-            <div className="mt-2 text-xs tracking-[0.18em] text-sidebar-foreground/55 uppercase">
-              Laboratório de prótese dentária
-            </div>
-          </div>
-        </div>
-        <div className="max-w-md">
-          <h2 className="font-display text-3xl leading-tight text-sidebar-accent-foreground">
-            Ordens de serviço com precisão clínica, do consultório à bancada.
-          </h2>
-          <p className="mt-4 text-sm text-sidebar-foreground/70">
-            Envie arquivos e fotos, marque os elementos no odontograma e acompanhe cada etapa da
-            produção em tempo real.
-          </p>
-        </div>
-        <div className="numeric text-xs text-sidebar-foreground/45">
-          Recebida → Em análise → Em produção → Em prova → Pronta → Entregue
-        </div>
+      <div className="relative hidden bg-sidebar lg:block">
+        <img
+          src="/login-lab.jpg"
+          alt="LAB PIGATTO — Ordens de serviço com precisão clínica, do consultório à bancada"
+          className="absolute inset-0 h-full w-full object-cover object-left"
+        />
       </div>
 
       <div className="flex items-center justify-center p-6">
