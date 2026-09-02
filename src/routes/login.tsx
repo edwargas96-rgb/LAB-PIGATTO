@@ -56,49 +56,63 @@ function Login() {
 
   return (
     <div className="relative grid min-h-screen lg:grid-cols-2">
-      <div className="relative hidden bg-gradient-to-r from-sidebar via-sidebar to-background lg:block">
+      <div className="relative hidden bg-sidebar lg:flex lg:flex-col">
         <img
           src="/login-lab.jpg"
           alt="LAB PIGATTO — Ordens de serviço com precisão clínica, do consultório à bancada"
           className="absolute inset-0 h-full w-full object-cover object-left"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-background opacity-40"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-transparent"></div>
 
-        <div className="absolute inset-0 flex flex-col items-center justify-center px-12">
-          <div className="max-w-xs text-center">
-            <h2 className="text-3xl font-bold text-white mb-4">Ordens de Serviço</h2>
-            <p className="text-white/80 text-sm leading-relaxed mb-8">
-              Com precisão clínica, do consultório à bancada. Acesse seu portal de serviços com facilidade.
-            </p>
-            <div className="w-16 h-1 bg-primary mx-auto rounded-full"></div>
-          </div>
-        </div>
-      </div>
-
-      <div className="flex items-center justify-center p-6 lg:p-12">
-        <div className="w-full max-w-sm">
-          <div className="mb-8 flex items-center gap-2.5 lg:hidden">
-            <img src="/logo-symbol.png" alt="" className="size-9 shrink-0" />
-            <div>
-              <div className="font-display text-xl font-bold">
-                LAB <span className="text-primary">PIGATTO</span>
-              </div>
-              <div className="mt-1 text-[11px] tracking-[0.16em] text-muted-foreground uppercase">
-                Prótese dentária
+        <div className="relative z-10 flex flex-col justify-between h-full p-12">
+          <div>
+            <div className="flex items-center gap-3">
+              <img src="https://i.imgur.com/i8WDIdd.png" alt="PIGATTO" className="h-12 w-auto" />
+              <div>
+                <div className="font-semibold text-white text-sm">PIGATTO</div>
+                <div className="text-xs text-white/70">prótese odontológica</div>
               </div>
             </div>
           </div>
 
-          <div className="mb-8 flex justify-center">
-            <img
-              src="https://i.imgur.com/i8WDIdd.png"
-              alt="LAB PIGATTO"
-              className="h-24 w-auto"
-            />
+          <div>
+            <h2 className="text-4xl font-bold text-white mb-6 leading-tight">
+              Ordens de serviço com precisão clínica, do consultório à bancada.
+            </h2>
+            <p className="text-white/80 text-sm leading-relaxed mb-8">
+              Envie arquivos e fotos, marque os elementos no odontograma e acompanhe cada etapa de produção em tempo real.
+            </p>
+            <div className="w-16 h-1 bg-primary rounded-full mb-12"></div>
+
+            <div className="flex gap-2 text-xs text-white/60 flex-wrap">
+              <span>Recebido</span>
+              <span>—</span>
+              <span>Em análise</span>
+              <span>—</span>
+              <span>Em produção</span>
+              <span>—</span>
+              <span>Em prova</span>
+              <span>—</span>
+              <span>Pronta</span>
+              <span>—</span>
+              <span>Entrega</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="relative flex items-center justify-center p-6 bg-gradient-to-l from-background to-background/80 lg:bg-background">
+        <div className="w-full max-w-sm">
+          <div className="mb-8 flex items-center gap-2.5 lg:hidden">
+            <img src="https://i.imgur.com/i8WDIdd.png" alt="PIGATTO" className="h-8 w-auto" />
+            <div>
+              <div className="font-semibold text-sm">PIGATTO</div>
+              <div className="text-xs text-muted-foreground">prótese odontológica</div>
+            </div>
           </div>
 
-          <h1 className="text-center text-2xl font-semibold">Entrar</h1>
-          <p className="mt-2 text-center text-sm text-muted-foreground">
+          <h1 className="text-2xl font-semibold">Entrar</h1>
+          <p className="mt-2 text-sm text-muted-foreground">
             Acesso das clínicas e dentistas parceiros. Use o e-mail e a senha do seu cadastro.
           </p>
 
