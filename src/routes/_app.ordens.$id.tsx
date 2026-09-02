@@ -183,6 +183,16 @@ function DetalheOrdem() {
   const fotos = arquivos.filter((a) => a.tipo === "foto");
   const anexos = arquivos.filter((a) => a.tipo !== "foto");
 
+  // O laboratório pode deixar um recado de duas formas: o campo dedicado
+  // (resposta_laboratorio) ou um comentário ao trocar o status (order_events).
+  // Unificamos aqui para a clínica sempre ver o mais recente num único lugar,
+  // sem precisar saber por qual caminho o laboratório escreveu.
+  const AUTO_COMENTARIOS_CLINICA = ["Ordem enviada pela clínica.", "Recebida pelo dentista"];
+  const ultimoComentarioLab = eventos.find(
+    (ev) => ev.comentario && !AUTO_COMENTARIOS_CLINICA.includes(ev.comentario),
+  );
+  const mensagemLaboratorio = ordem.resposta_laboratorio || ultimoComentarioLab?.comentario || null;
+
   return (
     <AppLayout
       titulo={`Ordem ${ordem.numero}`}
@@ -306,12 +316,12 @@ function DetalheOrdem() {
             </section>
           )}
 
-          {ordem.resposta_laboratorio && (
+          {mensagemLaboratorio && (
             <section className="rounded-xl border border-primary/30 bg-primary-soft/40 p-5 shadow-[var(--shadow-card)]">
               <h2 className="mb-2 flex items-center gap-1.5 text-sm font-semibold tracking-[0.08em] text-muted-foreground uppercase">
                 <MessageSquare className="size-4" /> Mensagem do laboratório
               </h2>
-              <p className="text-sm whitespace-pre-wrap">{ordem.resposta_laboratorio}</p>
+              <p className="text-sm whitespace-pre-wrap">{mensagemLaboratorio}</p>
             </section>
           )}
 
