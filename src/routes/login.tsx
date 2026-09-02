@@ -72,8 +72,8 @@ function Login() {
           aria-hidden="true"
           className="absolute inset-0 h-full w-full object-cover object-left"
           style={{
-            maskImage: "linear-gradient(to right, #000 0%, #000 78%, rgba(0,0,0,0) 100%)",
-            WebkitMaskImage: "linear-gradient(to right, #000 0%, #000 78%, rgba(0,0,0,0) 100%)",
+            maskImage: "linear-gradient(to right, #000 0%, #000 84%, rgba(0,0,0,0.55) 93%, rgba(0,0,0,0) 100%)",
+            WebkitMaskImage: "linear-gradient(to right, #000 0%, #000 84%, rgba(0,0,0,0.55) 93%, rgba(0,0,0,0) 100%)",
           }}
         />
         {/* Véu escuro só do lado do texto, para garantir contraste. */}
@@ -81,7 +81,7 @@ function Login() {
           className="absolute inset-0"
           style={{
             backgroundImage:
-              "linear-gradient(to right, rgba(4,16,27,0.72) 0%, rgba(4,16,27,0.28) 40%, rgba(4,16,27,0) 66%)",
+              "linear-gradient(to right, rgba(8,32,54,0.70) 0%, rgba(8,32,54,0.26) 42%, rgba(8,32,54,0) 70%)",
           }}
         />
 
@@ -124,11 +124,17 @@ function Login() {
       <div className="flex items-center justify-center overflow-y-auto px-6 py-12">
         <div className="w-full max-w-sm lg:mt-10">
           <div className="mb-9 flex justify-center">
-            <img
-              src="https://i.imgur.com/i8WDIdd.png"
-              alt="LAB PIGATTO"
-              className="h-28 w-auto mix-blend-multiply"
-            />
+            {/* O arquivo da logo tem uma placa de fundo. O véu com sombra
+                interna na cor da página esfuma as bordas do retângulo, para
+                a logo não aparecer como um quadrado colado na tela. */}
+            <div className="relative">
+              <img src="https://i.imgur.com/i8WDIdd.png" alt="LAB PIGATTO" className="h-28 w-auto" />
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0"
+                style={{ boxShadow: "inset 0 0 20px 8px var(--background)" }}
+              />
+            </div>
           </div>
 
           <h1 className="text-center text-2xl font-semibold">Entrar</h1>
