@@ -122,17 +122,17 @@ function Login() {
 
       {/* Painel da direita: logo em destaque + formulário. */}
       <div className="flex items-center justify-center overflow-y-auto px-6 py-12">
-        <div className="w-full max-w-sm lg:mt-10">
-          <div className="mb-9 flex justify-center">
+        <div className="w-full max-w-sm lg:mt-6">
+          <div className="mb-8 flex justify-center">
             {/* O arquivo da logo tem uma placa de fundo. O véu com sombra
                 interna na cor da página esfuma as bordas do retângulo, para
                 a logo não aparecer como um quadrado colado na tela. */}
             <div className="relative">
-              <img src="https://i.imgur.com/i8WDIdd.png" alt="LAB PIGATTO" className="h-28 w-auto" />
+              <img src="https://i.imgur.com/i8WDIdd.png" alt="LAB PIGATTO" className="h-40 w-auto" />
               <div
                 aria-hidden="true"
                 className="pointer-events-none absolute inset-0"
-                style={{ boxShadow: "inset 0 0 20px 8px var(--background)" }}
+                style={{ boxShadow: "inset 0 0 28px 11px var(--background)" }}
               />
             </div>
           </div>
