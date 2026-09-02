@@ -38,7 +38,7 @@ export const Route = createFileRoute("/_app/nova-ordem")({
 
 function Secao({ titulo, children }: { titulo: string; children: React.ReactNode }) {
   return (
-    <section className="rounded-xl border border-border bg-card p-4 shadow-[var(--shadow-card)] sm:p-6">
+    <section className="min-w-0 rounded-xl border border-border bg-card p-4 shadow-[var(--shadow-card)] sm:p-6">
       <h2 className="mb-4 text-sm font-semibold tracking-[0.08em] text-muted-foreground uppercase">
         {titulo}
       </h2>
