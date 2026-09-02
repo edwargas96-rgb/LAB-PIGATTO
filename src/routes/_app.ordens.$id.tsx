@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowLeft, Download, FileText, MessageSquare } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -19,6 +19,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { STATUS_LIST, formatarData, formatarDataHora, formatarTamanho } from "@/lib/ordens";
+import { marcarOrdemVisitada } from "@/lib/mensagens";
 
 export const Route = createFileRoute("/_app/ordens/$id")({
   head: () => ({
@@ -43,7 +44,7 @@ function Campo({ rotulo, valor }: { rotulo: string; valor?: string | null | unde
 
 function DetalheOrdem() {
   const { id } = Route.useParams();
-  const { role, nomeCompleto, email } = useAuth();
+  const { role, nomeCompleto, email, userId } = useAuth();
   const isLab = role === "laboratorio";
   const queryClient = useQueryClient();
   const [novoStatus, setNovoStatus] = useState("");
@@ -51,6 +52,12 @@ function DetalheOrdem() {
   const [salvando, setSalvando] = useState(false);
   const [mensagemClinica, setMensagemClinica] = useState("");
   const [enviandoMensagem, setEnviandoMensagem] = useState(false);
+
+  // Abrir a ordem já conta como "vista", para o selo de mensagem nova
+  // sumir da lista.
+  useEffect(() => {
+    if (userId) marcarOrdemVisitada(userId, id);
+  }, [userId, id]);
 
   const { data: ordem, isLoading } = useQuery({
     queryKey: ["ordem", id],

@@ -7,6 +7,7 @@ import { AppLayout } from "@/components/AppLayout";
 import { StatusBadge, PrazoBadge } from "@/components/StatusBadge";
 import { Button } from "@/components/ui/button";
 import { formatarData, prazoTipo, diasRestantes } from "@/lib/ordens";
+import { obterUltimaVisita, ultimaMensagemDaOutraParte } from "@/lib/mensagens";
 
 export const Route = createFileRoute("/_app/dashboard")({
   head: () => ({
@@ -20,6 +21,8 @@ export const Route = createFileRoute("/_app/dashboard")({
   component: Dashboard,
 });
 
+type EventoComentario = { comentario: string | null; status: string | null; created_at: string };
+
 type OrdemLista = {
   id: string;
   numero: string;
@@ -32,7 +35,7 @@ type OrdemLista = {
 };
 
 function Dashboard() {
-  const { role } = useAuth();
+  const { role, userId } = useAuth();
   const isLab = role === "laboratorio";
 
   const { data: ordens = [], isLoading } = useQuery({
@@ -44,6 +47,28 @@ function Dashboard() {
         .order("created_at", { ascending: false });
       if (error) throw error;
       return (data ?? []) as unknown as OrdemLista[];
+    },
+  });
+
+  // Mensagens recentes de todas as ordens, para o selo de "nova mensagem"
+  // na lista — mesma lógica da tela da ordem, sem e-mail nem push.
+  const { data: eventosPorOrdem = new Map<string, EventoComentario[]>() } = useQuery({
+    queryKey: ["ordens-eventos-recentes"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("order_events")
+        .select("order_id, comentario, status, created_at")
+        .not("comentario", "is", null)
+        .order("created_at", { ascending: false })
+        .limit(300);
+      if (error) throw error;
+      const porOrdem = new Map<string, EventoComentario[]>();
+      for (const ev of data ?? []) {
+        const lista = porOrdem.get(ev.order_id) ?? [];
+        lista.push(ev);
+        porOrdem.set(ev.order_id, lista);
+      }
+      return porOrdem;
     },
   });
 
@@ -119,6 +144,13 @@ function Dashboard() {
                     : d === 0
                       ? "Entrega hoje"
                       : `${d} d restantes`;
+
+              const mensagem = ultimaMensagemDaOutraParte(eventosPorOrdem.get(o.id) ?? [], isLab);
+              const mensagemNova =
+                !!mensagem &&
+                !!userId &&
+                new Date(mensagem.created_at).getTime() > obterUltimaVisita(userId, o.id);
+
               return (
                 <li key={o.id}>
                   <Link
@@ -126,8 +158,14 @@ function Dashboard() {
                     params={{ id: o.id }}
                     className="flex flex-col gap-2 px-4 py-4 transition-colors hover:bg-secondary/60 sm:flex-row sm:items-center sm:gap-4"
                   >
-                    <span className="numeric w-20 shrink-0 text-sm font-semibold text-primary">
+                    <span className="relative numeric w-20 shrink-0 text-sm font-semibold text-primary">
                       {o.numero}
+                      {mensagemNova && (
+                        <span
+                          className="absolute -top-0.5 -right-2 size-2 rounded-full bg-danger"
+                          aria-hidden="true"
+                        />
+                      )}
                     </span>
                     <div className="min-w-0 flex-1">
                       <div className="truncate font-medium">{o.paciente}</div>
@@ -137,6 +175,11 @@ function Dashboard() {
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
+                      {mensagemNova && (
+                        <span className="inline-flex items-center gap-1 rounded-full bg-danger/10 px-2 py-0.5 text-[11px] font-medium text-danger">
+                          Nova mensagem
+                        </span>
+                      )}
                       <PrazoBadge tipo={tipo} texto={texto} />
                       <StatusBadge status={o.status} />
                     </div>
