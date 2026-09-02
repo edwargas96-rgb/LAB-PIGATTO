@@ -214,6 +214,9 @@ function DetalheOrdem() {
     (ev) => ev.comentario && ev.status !== null && !AUTO_COMENTARIOS_CLINICA.includes(ev.comentario),
   );
   const mensagemLaboratorio = ordem.resposta_laboratorio || ultimoComentarioLab?.comentario || null;
+  // Mensagem mais recente enviada pela clínica pelo compositor (status nulo),
+  // para o laboratório não precisar garimpar a Linha do tempo para achá-la.
+  const mensagemDaClinica = eventos.find((ev) => ev.comentario && ev.status === null)?.comentario ?? null;
 
   return (
     <AppLayout
@@ -376,6 +379,15 @@ function DetalheOrdem() {
                   </Button>
                 </div>
               )}
+            </section>
+          )}
+
+          {isLab && mensagemDaClinica && (
+            <section className="rounded-xl border border-primary/30 bg-primary-soft/40 p-5 shadow-[var(--shadow-card)]">
+              <h2 className="mb-2 flex items-center gap-1.5 text-sm font-semibold tracking-[0.08em] text-muted-foreground uppercase">
+                <MessageSquare className="size-4" /> Mensagem da clínica
+              </h2>
+              <p className="text-sm whitespace-pre-wrap">{mensagemDaClinica}</p>
             </section>
           )}
 
