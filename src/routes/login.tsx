@@ -8,7 +8,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-const WHATSAPP = "https://wa.me/5541991071492";
+const WHATSAPP_NUMERO = "5541991071492";
+
+// Mensagem já preenchida na conversa, para a pessoa só apertar enviar.
+const WHATSAPP_MENSAGEM =
+  "Olá! Gostaria de solicitar meu acesso ao portal do LAB PIGATTO " +
+  "para enviar meus trabalhos digitais.";
+
+const WHATSAPP = `https://wa.me/${WHATSAPP_NUMERO}?text=${encodeURIComponent(WHATSAPP_MENSAGEM)}`;
 
 const ETAPAS = ["Recebida", "Em análise", "Em produção", "Em prova", "Pronta", "Entregue"];
 
