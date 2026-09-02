@@ -241,7 +241,7 @@ function DetalheOrdem() {
       </div>
 
       <div className="grid gap-5 lg:grid-cols-[1fr_20rem]">
-        <div className="space-y-5">
+        <div className="min-w-0 space-y-5">
           <section className="rounded-xl border border-border bg-card p-5 shadow-[var(--shadow-card)]">
             <h2 className="mb-4 text-sm font-semibold tracking-[0.08em] text-muted-foreground uppercase">
               Dados do trabalho
@@ -333,7 +333,7 @@ function DetalheOrdem() {
           </section>
         </div>
 
-        <div className="space-y-5">
+        <div className="min-w-0 space-y-5">
           {!isLab && ordem.status !== "Recebida" && (
             <section className="rounded-xl border border-primary/30 bg-primary-soft/40 p-5 shadow-[var(--shadow-card)]">
               <h2 className="mb-2 text-sm font-semibold tracking-[0.08em] text-muted-foreground uppercase">

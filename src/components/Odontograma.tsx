@@ -67,7 +67,7 @@ export function Odontograma({
   };
 
   const linha = (dentes: number[]) => (
-    <div className="flex justify-center gap-1 overflow-x-auto pb-1">
+    <div className="-mx-3 flex min-w-0 gap-1 overflow-x-auto px-3 pb-1 sm:mx-0 sm:justify-center sm:overflow-visible sm:px-0">
       {dentes.map((n, i) => (
         <div key={n} className={cn(i === 8 && "ml-2 border-l border-dashed border-border pl-2")}>
           <Dente
@@ -82,7 +82,7 @@ export function Odontograma({
   );
 
   return (
-    <div className="rounded-xl border border-border bg-gradient-to-b from-card to-secondary/60 p-3 sm:p-4">
+    <div className="min-w-0 rounded-xl border border-border bg-gradient-to-b from-card to-secondary/60 p-3 sm:p-4">
       <div className="mb-2 flex items-center justify-between text-[11px] tracking-wide text-muted-foreground uppercase">
         <span>Arcada superior</span>
         <span className="numeric">FDI</span>
