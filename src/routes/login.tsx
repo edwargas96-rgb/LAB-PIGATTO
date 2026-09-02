@@ -1,11 +1,22 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { Camera, Clock, Upload } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+
+const WHATSAPP = "https://wa.me/5541991071492";
+
+const ETAPAS = ["Recebida", "Em análise", "Em produção", "Em prova", "Pronta", "Entregue"];
+
+const DESTAQUES = [
+  { icone: Upload, texto: "Envie arquivos e fotos do caso" },
+  { icone: Camera, texto: "Marque os elementos no odontograma" },
+  { icone: Clock, texto: "Acompanhe cada etapa em tempo real" },
+];
 
 export const Route = createFileRoute("/login")({
   ssr: false,
@@ -50,69 +61,78 @@ function Login() {
     navigate({ to: "/dashboard", replace: true });
   };
 
-  const openWhatsApp = () => {
-    window.open("https://wa.me/5541991071492", "_blank");
-  };
-
   return (
-    <div className="relative grid min-h-screen lg:grid-cols-2">
-      <div className="relative hidden bg-sidebar lg:flex lg:flex-col">
+    <div className="grid min-h-screen grid-rows-[1fr] bg-background lg:grid-cols-2">
+      {/* Painel da esquerda: arte + texto. A arte dissolve na cor da página
+          à direita (máscara), para não haver corte seco entre as metades. */}
+      <div className="relative hidden h-full overflow-hidden lg:block">
         <img
-          src="/login-lab.jpg"
-          alt="LAB PIGATTO — Ordens de serviço com precisão clínica, do consultório à bancada"
+          src="/login-art.jpg"
+          alt=""
+          aria-hidden="true"
           className="absolute inset-0 h-full w-full object-cover object-left"
+          style={{
+            maskImage: "linear-gradient(to right, #000 0%, #000 78%, rgba(0,0,0,0) 100%)",
+            WebkitMaskImage: "linear-gradient(to right, #000 0%, #000 78%, rgba(0,0,0,0) 100%)",
+          }}
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-transparent"></div>
+        {/* Véu escuro só do lado do texto, para garantir contraste. */}
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage:
+              "linear-gradient(to right, rgba(4,16,27,0.72) 0%, rgba(4,16,27,0.28) 40%, rgba(4,16,27,0) 66%)",
+          }}
+        />
 
-        <div className="relative z-10 flex flex-col justify-between h-full p-12">
-          <div>
-            <div className="flex items-center gap-3">
-              <img src="https://i.imgur.com/i8WDIdd.png" alt="PIGATTO" className="h-12 w-auto" />
-              <div>
-                <div className="font-semibold text-white text-sm">PIGATTO</div>
-                <div className="text-xs text-white/70">prótese odontológica</div>
-              </div>
-            </div>
-          </div>
+        <div className="relative flex h-full flex-col justify-between p-12 xl:p-14">
+          <span className="text-[11px] font-medium tracking-[0.22em] text-white/55 uppercase">
+            Portal do dentista
+          </span>
 
-          <div>
-            <h2 className="text-4xl font-bold text-white mb-6 leading-tight">
+          <div className="max-w-[24rem] xl:max-w-[26rem]">
+            <h2 className="font-display text-[2rem] leading-[1.15] font-bold text-white xl:text-[2.3rem]">
               Ordens de serviço com precisão clínica, do consultório à bancada.
             </h2>
-            <p className="text-white/80 text-sm leading-relaxed mb-8">
-              Envie arquivos e fotos, marque os elementos no odontograma e acompanhe cada etapa de produção em tempo real.
-            </p>
-            <div className="w-16 h-1 bg-primary rounded-full mb-12"></div>
 
-            <div className="flex gap-2 text-xs text-white/60 flex-wrap">
-              <span>Recebido</span>
-              <span>—</span>
-              <span>Em análise</span>
-              <span>—</span>
-              <span>Em produção</span>
-              <span>—</span>
-              <span>Em prova</span>
-              <span>—</span>
-              <span>Pronta</span>
-              <span>—</span>
-              <span>Entrega</span>
-            </div>
+            <div className="mt-8 h-px w-14 bg-white/25" />
+
+            <ul className="mt-8 space-y-3.5">
+              {DESTAQUES.map(({ icone: Icone, texto }) => (
+                <li key={texto} className="flex items-center gap-3.5 text-sm text-white/75">
+                  <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-white/10 ring-1 ring-white/15">
+                    <Icone className="size-4 text-white/90" />
+                  </span>
+                  {texto}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="flex items-center gap-x-2 text-[10px] tracking-wide text-white/45">
+            {ETAPAS.map((etapa, i) => (
+              <span key={etapa} className="flex items-center gap-2 whitespace-nowrap">
+                {i > 0 && <span aria-hidden="true">→</span>}
+                {etapa}
+              </span>
+            ))}
           </div>
         </div>
       </div>
 
-      <div className="relative flex items-center justify-center p-6 bg-gradient-to-l from-background to-background/80 lg:bg-background">
-        <div className="w-full max-w-sm">
-          <div className="mb-8 flex items-center gap-2.5 lg:hidden">
-            <img src="https://i.imgur.com/i8WDIdd.png" alt="PIGATTO" className="h-8 w-auto" />
-            <div>
-              <div className="font-semibold text-sm">PIGATTO</div>
-              <div className="text-xs text-muted-foreground">prótese odontológica</div>
-            </div>
+      {/* Painel da direita: logo em destaque + formulário. */}
+      <div className="flex items-center justify-center overflow-y-auto px-6 py-12">
+        <div className="w-full max-w-sm lg:mt-10">
+          <div className="mb-9 flex justify-center">
+            <img
+              src="https://i.imgur.com/i8WDIdd.png"
+              alt="LAB PIGATTO"
+              className="h-28 w-auto mix-blend-multiply"
+            />
           </div>
 
-          <h1 className="text-2xl font-semibold">Entrar</h1>
-          <p className="mt-2 text-sm text-muted-foreground">
+          <h1 className="text-center text-2xl font-semibold">Entrar</h1>
+          <p className="mx-auto mt-2 max-w-[19rem] text-center text-sm text-muted-foreground">
             Acesso das clínicas e dentistas parceiros. Use o e-mail e a senha do seu cadastro.
           </p>
 
@@ -146,25 +166,21 @@ function Login() {
             </Button>
           </form>
 
-          <div className="mt-6 space-y-4">
+          <div className="mt-8 border-t border-border pt-6">
             <p className="text-center text-xs text-muted-foreground">
-              Ainda não tem acesso? Solicite o cadastro da sua clínica ao LAB PIGATTO.
+              Ainda não tem acesso? Fale com a gente e solicite o cadastro da sua clínica.
             </p>
-
-            <button
-              type="button"
-              onClick={openWhatsApp}
-              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-[#25D366] hover:bg-[#20BA5A] text-white font-medium rounded-lg transition-colors"
+            <a
+              href={WHATSAPP}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-3 flex h-10 w-full items-center justify-center gap-2 rounded-md bg-[#25D366] text-sm font-medium text-white transition-colors hover:bg-[#1EBE5A] focus-visible:ring-2 focus-visible:ring-[#25D366]/40 focus-visible:outline-none"
             >
-              <svg
-                className="w-5 h-5"
-                fill="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.67-.51-.173-.008-.371 0-.57 0-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.076 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421-7.403h-.004a9.87 9.87 0 00-4.887 1.235c-1.516.791-2.911 1.963-3.965 3.428C3.02 10.465 2.5 12.16 2.5 13.9c0 1.933.48 3.797 1.388 5.471l-1.479 5.402 5.517-1.45c1.602.887 3.447 1.355 5.375 1.355 6.165 0 11.172-5.027 11.172-11.201 0-2.99-1.193-5.81-3.356-7.93-2.162-2.121-5.053-3.329-8.107-3.329z"/>
+              <svg viewBox="0 0 24 24" aria-hidden="true" className="size-4 fill-current">
+                <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Zm0 18.15h-.01a8.23 8.23 0 0 1-4.19-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.19 8.19 0 0 1-1.26-4.38c0-4.54 3.7-8.23 8.25-8.23 2.2 0 4.27.86 5.83 2.42a8.18 8.18 0 0 1 2.41 5.82c0 4.54-3.7 8.23-8.24 8.23Zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.24-.64.8-.79.97-.14.16-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.01-.38.11-.5.11-.11.25-.29.37-.43.13-.15.17-.25.25-.41.08-.17.04-.31-.02-.44-.06-.12-.56-1.34-.76-1.84-.2-.48-.4-.42-.56-.43h-.47c-.17 0-.43.06-.66.31-.23.25-.87.85-.87 2.07s.89 2.4 1.02 2.56c.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.08.14-1.18-.06-.11-.22-.17-.47-.29Z" />
               </svg>
-              Fale conosco pelo WhatsApp
-            </button>
+              Falar no WhatsApp
+            </a>
           </div>
         </div>
       </div>
