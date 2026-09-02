@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
-import { Search, Plus, Printer, Loader2 } from "lucide-react";
+import { Search, Plus, Printer, Loader2, MessageSquare } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
@@ -264,6 +264,8 @@ function DetalheOS({ os, onClose, onChange }: { os: OS; onClose: () => void; onC
     ? Math.round((etapas.filter((e) => e.concluida).length / etapas.length) * 100)
     : 0;
 
+  const mensagemClinica = eventos.find((ev) => ev.comentario && ev.status === null)?.comentario ?? null;
+
   const mudarStatus = async (novo: LabStatus, comentario: string) => {
     setSalvando(true);
     const patch: Record<string, unknown> = {
@@ -347,6 +349,15 @@ function DetalheOS({ os, onClose, onChange }: { os: OS; onClose: () => void; onC
           </div>
           {acao}
         </div>
+
+        {mensagemClinica && (
+          <section className="rounded-lg border border-primary/30 bg-primary-soft/40 p-3">
+            <h3 className="mb-1 flex items-center gap-1.5 text-xs font-semibold text-muted-foreground uppercase">
+              <MessageSquare className="size-3.5" /> Mensagem da clínica
+            </h3>
+            <p className="text-sm whitespace-pre-wrap">{mensagemClinica}</p>
+          </section>
+        )}
 
         <div className="grid gap-5 sm:grid-cols-2">
           <section className="space-y-3">
