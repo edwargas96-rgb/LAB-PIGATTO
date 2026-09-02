@@ -49,6 +49,8 @@ function DetalheOrdem() {
   const [novoStatus, setNovoStatus] = useState("");
   const [comentario, setComentario] = useState("");
   const [salvando, setSalvando] = useState(false);
+  const [mensagemClinica, setMensagemClinica] = useState("");
+  const [enviandoMensagem, setEnviandoMensagem] = useState(false);
 
   const { data: ordem, isLoading } = useQuery({
     queryKey: ["ordem", id],
@@ -131,6 +133,26 @@ function DetalheOrdem() {
     queryClient.invalidateQueries({ queryKey: ["ordens"] });
   };
 
+  const enviarMensagem = async () => {
+    const texto = mensagemClinica.trim();
+    if (!texto) return;
+    setEnviandoMensagem(true);
+    const { error } = await supabase.from("order_events").insert({
+      order_id: id,
+      status: null,
+      comentario: texto,
+      autor: nomeCompleto || email || "Clínica",
+    });
+    setEnviandoMensagem(false);
+    if (error) {
+      toast.error("Não foi possível enviar a mensagem.");
+      return;
+    }
+    setMensagemClinica("");
+    toast.success("Mensagem enviada ao laboratório");
+    queryClient.invalidateQueries({ queryKey: ["ordem-eventos", id] });
+  };
+
   // Dentista confirma o recebimento do trabalho entregue.
   const marcarRecebida = async () => {
     setSalvando(true);
@@ -189,7 +211,7 @@ function DetalheOrdem() {
   // sem precisar saber por qual caminho o laboratório escreveu.
   const AUTO_COMENTARIOS_CLINICA = ["Ordem enviada pela clínica.", "Recebida pelo dentista"];
   const ultimoComentarioLab = eventos.find(
-    (ev) => ev.comentario && !AUTO_COMENTARIOS_CLINICA.includes(ev.comentario),
+    (ev) => ev.comentario && ev.status !== null && !AUTO_COMENTARIOS_CLINICA.includes(ev.comentario),
   );
   const mensagemLaboratorio = ordem.resposta_laboratorio || ultimoComentarioLab?.comentario || null;
 
@@ -316,12 +338,44 @@ function DetalheOrdem() {
             </section>
           )}
 
-          {mensagemLaboratorio && (
+          {(mensagemLaboratorio || !isLab) && (
             <section className="rounded-xl border border-primary/30 bg-primary-soft/40 p-5 shadow-[var(--shadow-card)]">
               <h2 className="mb-2 flex items-center gap-1.5 text-sm font-semibold tracking-[0.08em] text-muted-foreground uppercase">
                 <MessageSquare className="size-4" /> Mensagem do laboratório
               </h2>
-              <p className="text-sm whitespace-pre-wrap">{mensagemLaboratorio}</p>
+              {mensagemLaboratorio ? (
+                <p className="text-sm whitespace-pre-wrap">{mensagemLaboratorio}</p>
+              ) : (
+                <p className="text-sm text-muted-foreground">
+                  O laboratório ainda não enviou nenhuma mensagem.
+                </p>
+              )}
+
+              {!isLab && (
+                <div className="mt-4 space-y-3">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="mensagem-clinica">
+                      {mensagemLaboratorio ? "Responder" : "Enviar mensagem"}
+                    </Label>
+                    <Textarea
+                      id="mensagem-clinica"
+                      rows={3}
+                      maxLength={500}
+                      value={mensagemClinica}
+                      onChange={(e) => setMensagemClinica(e.target.value)}
+                      placeholder="Escreva para o laboratório…"
+                    />
+                  </div>
+                  <Button
+                    onClick={enviarMensagem}
+                    disabled={enviandoMensagem || !mensagemClinica.trim()}
+                    size="sm"
+                    className="w-full"
+                  >
+                    {enviandoMensagem ? "Enviando…" : "Enviar"}
+                  </Button>
+                </div>
+              )}
             </section>
           )}
 
@@ -372,7 +426,7 @@ function DetalheOrdem() {
                 {eventos.map((ev) => (
                   <li key={ev.id} className="relative">
                     <span className="absolute top-1.5 -left-[1.4rem] size-2.5 rounded-full bg-primary ring-4 ring-card" />
-                    <div className="text-sm font-medium">{ev.status}</div>
+                    <div className="text-sm font-medium">{ev.status ?? "Mensagem"}</div>
                     <div className="numeric text-xs text-muted-foreground">
                       {formatarDataHora(ev.created_at)}
                     </div>
