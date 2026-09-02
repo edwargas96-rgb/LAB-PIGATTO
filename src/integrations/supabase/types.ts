@@ -10,7 +10,7 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.15"
+    PostgrestVersion: "14.5"
   }
   public: {
     Tables: {
@@ -50,6 +50,78 @@ export type Database = {
         }
         Relationships: []
       }
+      documentario_acessos: {
+        Row: {
+          cakto_transaction_id: string | null
+          created_at: string
+          email: string
+          produto: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          cakto_transaction_id?: string | null
+          created_at?: string
+          email: string
+          produto?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          cakto_transaction_id?: string | null
+          created_at?: string
+          email?: string
+          produto?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      foto_pedidos: {
+        Row: {
+          cenario: string | null
+          clima: string | null
+          combo: boolean
+          created_at: string
+          ebook: boolean
+          enquadramento: string | null
+          figura: string | null
+          formato: string | null
+          id: string
+          indicado_por: string | null
+          nome: string | null
+          whatsapp: string | null
+        }
+        Insert: {
+          cenario?: string | null
+          clima?: string | null
+          combo?: boolean
+          created_at?: string
+          ebook?: boolean
+          enquadramento?: string | null
+          figura?: string | null
+          formato?: string | null
+          id?: string
+          indicado_por?: string | null
+          nome?: string | null
+          whatsapp?: string | null
+        }
+        Update: {
+          cenario?: string | null
+          clima?: string | null
+          combo?: boolean
+          created_at?: string
+          ebook?: boolean
+          enquadramento?: string | null
+          figura?: string | null
+          formato?: string | null
+          id?: string
+          indicado_por?: string | null
+          nome?: string | null
+          whatsapp?: string | null
+        }
+        Relationships: []
+      }
       implant_systems: {
         Row: {
           ativo: boolean
@@ -83,6 +155,24 @@ export type Database = {
           ativo?: boolean
           id?: string
           nome?: string
+        }
+        Relationships: []
+      }
+      lab_settings: {
+        Row: {
+          id: boolean
+          plano: Database["public"]["Enums"]["lab_plano"]
+          updated_at: string
+        }
+        Insert: {
+          id?: boolean
+          plano?: Database["public"]["Enums"]["lab_plano"]
+          updated_at?: string
+        }
+        Update: {
+          id?: boolean
+          plano?: Database["public"]["Enums"]["lab_plano"]
+          updated_at?: string
         }
         Relationships: []
       }
@@ -177,63 +267,122 @@ export type Database = {
           },
         ]
       }
+      order_steps: {
+        Row: {
+          concluida: boolean
+          created_at: string
+          id: string
+          nome: string
+          ordem: number
+          order_id: string
+        }
+        Insert: {
+          concluida?: boolean
+          created_at?: string
+          id?: string
+          nome: string
+          ordem?: number
+          order_id: string
+        }
+        Update: {
+          concluida?: boolean
+          created_at?: string
+          id?: string
+          nome?: string
+          ordem?: number
+          order_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_steps_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       orders: {
         Row: {
           clinic_id: string
+          convenio: string | null
           cor: string | null
           created_at: string
           created_by: string
           data_entrega: string
           dentista: string | null
           elementos: number[]
+          entregue_em: string | null
           id: string
           implante: string | null
           item: string | null
+          lab_status: Database["public"]["Enums"]["lab_os_status"]
+          laboratorio_destino: string | null
           material: string | null
           numero: string
           observacoes: string | null
           paciente: string
+          resposta_laboratorio: string | null
           scanbody: string | null
           sob_implante: boolean
           status: Database["public"]["Enums"]["order_status"]
+          tecnico_id: string | null
+          urgencia: string | null
+          valor: number | null
         }
         Insert: {
           clinic_id: string
+          convenio?: string | null
           cor?: string | null
           created_at?: string
           created_by: string
           data_entrega: string
           dentista?: string | null
           elementos?: number[]
+          entregue_em?: string | null
           id?: string
           implante?: string | null
           item?: string | null
+          lab_status?: Database["public"]["Enums"]["lab_os_status"]
+          laboratorio_destino?: string | null
           material?: string | null
           numero?: string
           observacoes?: string | null
           paciente: string
+          resposta_laboratorio?: string | null
           scanbody?: string | null
           sob_implante?: boolean
           status?: Database["public"]["Enums"]["order_status"]
+          tecnico_id?: string | null
+          urgencia?: string | null
+          valor?: number | null
         }
         Update: {
           clinic_id?: string
+          convenio?: string | null
           cor?: string | null
           created_at?: string
           created_by?: string
           data_entrega?: string
           dentista?: string | null
           elementos?: number[]
+          entregue_em?: string | null
           id?: string
           implante?: string | null
           item?: string | null
+          lab_status?: Database["public"]["Enums"]["lab_os_status"]
+          laboratorio_destino?: string | null
           material?: string | null
           numero?: string
           observacoes?: string | null
           paciente?: string
+          resposta_laboratorio?: string | null
           scanbody?: string | null
           sob_implante?: boolean
           status?: Database["public"]["Enums"]["order_status"]
+          tecnico_id?: string | null
+          urgencia?: string | null
+          valor?: number | null
         }
         Relationships: [
           {
@@ -241,6 +390,13 @@ export type Database = {
             columns: ["clinic_id"]
             isOneToOne: false
             referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_tecnico_id_fkey"
+            columns: ["tecnico_id"]
+            isOneToOne: false
+            referencedRelation: "tecnicos"
             referencedColumns: ["id"]
           },
         ]
@@ -287,6 +443,54 @@ export type Database = {
         }
         Update: {
           ativo?: boolean
+          id?: string
+          nome?: string
+        }
+        Relationships: []
+      }
+      servicos: {
+        Row: {
+          ativo: boolean
+          created_at: string
+          id: string
+          nome: string
+          valor: number
+        }
+        Insert: {
+          ativo?: boolean
+          created_at?: string
+          id?: string
+          nome: string
+          valor?: number
+        }
+        Update: {
+          ativo?: boolean
+          created_at?: string
+          id?: string
+          nome?: string
+          valor?: number
+        }
+        Relationships: []
+      }
+      tecnicos: {
+        Row: {
+          ativo: boolean
+          created_at: string
+          especialidade: string | null
+          id: string
+          nome: string
+        }
+        Insert: {
+          ativo?: boolean
+          created_at?: string
+          especialidade?: string | null
+          id?: string
+          nome: string
+        }
+        Update: {
+          ativo?: boolean
+          created_at?: string
+          especialidade?: string | null
           id?: string
           nome?: string
         }
@@ -347,6 +551,15 @@ export type Database = {
     }
     Enums: {
       app_role: "clinica" | "laboratorio"
+      lab_os_status:
+        | "Pendente"
+        | "Aceita"
+        | "Em Produção"
+        | "Concluída"
+        | "Entregue"
+        | "Recusada"
+        | "Recebida"
+      lab_plano: "essencial" | "profissional"
       order_status:
         | "Recebida"
         | "Em análise"
@@ -369,12 +582,12 @@ export type Tables<
   DefaultSchemaTableNameOrOptions extends
     | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
         DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -398,11 +611,11 @@ export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -423,11 +636,11 @@ export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -448,11 +661,11 @@ export type Enums<
   DefaultSchemaEnumNameOrOptions extends
     | keyof DefaultSchema["Enums"]
     | { schema: keyof DatabaseWithoutInternals },
-  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+  EnumName extends (DefaultSchemaEnumNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaEnumNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -465,11 +678,11 @@ export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
     | keyof DefaultSchema["CompositeTypes"]
     | { schema: keyof DatabaseWithoutInternals },
-  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+  CompositeTypeName extends (PublicCompositeTypeNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
-    : never = never,
+    : never) = never,
 > = PublicCompositeTypeNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -482,6 +695,16 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["clinica", "laboratorio"],
+      lab_os_status: [
+        "Pendente",
+        "Aceita",
+        "Em Produção",
+        "Concluída",
+        "Entregue",
+        "Recusada",
+        "Recebida",
+      ],
+      lab_plano: ["essencial", "profissional"],
       order_status: [
         "Recebida",
         "Em análise",

@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { ArrowLeft, Download, FileText } from "lucide-react";
+import { ArrowLeft, Download, FileText, MessageSquare } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
@@ -303,6 +303,15 @@ function DetalheOrdem() {
               <Button onClick={marcarRecebida} disabled={salvando} className="w-full">
                 {salvando ? "Salvando…" : "Marcar como recebida"}
               </Button>
+            </section>
+          )}
+
+          {ordem.resposta_laboratorio && (
+            <section className="rounded-xl border border-primary/30 bg-primary-soft/40 p-5 shadow-[var(--shadow-card)]">
+              <h2 className="mb-2 flex items-center gap-1.5 text-sm font-semibold tracking-[0.08em] text-muted-foreground uppercase">
+                <MessageSquare className="size-4" /> Mensagem do laboratório
+              </h2>
+              <p className="text-sm whitespace-pre-wrap">{ordem.resposta_laboratorio}</p>
             </section>
           )}
 
