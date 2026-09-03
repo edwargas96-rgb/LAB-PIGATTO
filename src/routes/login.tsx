@@ -121,7 +121,7 @@ function Login() {
         />
 
         <div className="relative flex flex-col items-center gap-2">
-          <img src="/logo-symbol.png" alt="" aria-hidden="true" className="size-8" />
+          <img src="https://i.imgur.com/dvmZg1a.png" alt="" aria-hidden="true" className="h-7 w-auto" />
           <span className="text-[11px] font-medium tracking-[0.3em] text-white/70 uppercase">
             Portal do dentista
           </span>
