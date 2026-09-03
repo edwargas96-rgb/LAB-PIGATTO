@@ -155,24 +155,22 @@ function Login() {
               </span>
             ))}
           </div>
+          {/* Desce até o login; gira 180° para apontar pra cima assim que a
+              abertura sai de vista, servindo de atalho pra voltar ao topo. */}
+          <button
+            type="button"
+            onClick={passouDaAbertura ? irParaTopo : irParaLogin}
+            aria-label={passouDaAbertura ? "Voltar ao topo" : "Ir para o login"}
+            className={[
+              "flex size-11 items-center justify-center rounded-full bg-white/10 ring-1 ring-white/25",
+              "transition-transform duration-300 ease-out hover:bg-white/20",
+              passouDaAbertura ? "rotate-180" : "animate-bounce",
+            ].join(" ")}
+          >
+            <ChevronDown className="size-5 text-white" />
+          </button>
         </div>
       </div>
-
-      {/* Botão flutuante só no celular: desce até o login, e vira "voltar
-          ao topo" (girando 180°) assim que a abertura sai de vista. */}
-      <button
-        type="button"
-        onClick={passouDaAbertura ? irParaTopo : irParaLogin}
-        aria-label={passouDaAbertura ? "Voltar ao topo" : "Ir para o login"}
-        className={[
-          "fixed bottom-6 left-1/2 z-20 flex size-11 -translate-x-1/2 items-center justify-center rounded-full",
-          "border border-border bg-background/90 text-foreground shadow-lg backdrop-blur",
-          "transition-transform duration-300 ease-out hover:bg-secondary lg:hidden",
-          passouDaAbertura ? "rotate-180" : "animate-bounce",
-        ].join(" ")}
-      >
-        <ChevronDown className="size-5" />
-      </button>
 
       <div className="grid grid-rows-[1fr] lg:min-h-screen lg:grid-cols-2">
       {/* Painel da esquerda: arte + texto. A arte dissolve na cor da página
