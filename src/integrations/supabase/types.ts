@@ -313,6 +313,7 @@ export type Database = {
           created_at: string
           created_by: string
           data_entrega: string
+          deleted_at: string | null
           dentista: string | null
           elementos: number[]
           entregue_em: string | null
@@ -340,6 +341,7 @@ export type Database = {
           created_at?: string
           created_by: string
           data_entrega: string
+          deleted_at?: string | null
           dentista?: string | null
           elementos?: number[]
           entregue_em?: string | null
@@ -367,6 +369,7 @@ export type Database = {
           created_at?: string
           created_by?: string
           data_entrega?: string
+          deleted_at?: string | null
           dentista?: string | null
           elementos?: number[]
           entregue_em?: string | null
