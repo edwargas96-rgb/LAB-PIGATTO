@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Camera, Clock, Upload } from "lucide-react";
@@ -163,7 +163,12 @@ function Login() {
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="senha">Senha</Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="senha">Senha</Label>
+                <Link to="/recuperar-senha" className="text-xs text-primary hover:underline">
+                  Esqueci minha senha
+                </Link>
+              </div>
               <Input
                 id="senha"
                 type="password"
