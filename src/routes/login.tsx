@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { Camera, ChevronDown, Clock, Upload } from "lucide-react";
+import { Camera, ChevronDown, Clock, Eye, EyeOff, Upload } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
@@ -46,12 +46,30 @@ function Login() {
   const { session, loading } = useAuth();
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
+  const [mostrarSenha, setMostrarSenha] = useState(false);
   const [enviando, setEnviando] = useState(false);
   const loginRef = useRef<HTMLDivElement>(null);
+  const heroRef = useRef<HTMLDivElement>(null);
+  const [passouDaAbertura, setPassouDaAbertura] = useState(false);
 
   const irParaLogin = () => {
     loginRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
+  const irParaTopo = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  // No celular, a seta vira "voltar ao topo" assim que a tela de abertura
+  // sai de vista, para não ficar presa lá embaixo depois que a pessoa rola.
+  useEffect(() => {
+    const onScroll = () => {
+      const alturaAbertura = heroRef.current?.offsetHeight ?? 0;
+      setPassouDaAbertura(window.scrollY > alturaAbertura - 80);
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   useEffect(() => {
     if (!loading && session) navigate({ to: "/dashboard", replace: true });
@@ -78,7 +96,10 @@ function Login() {
       {/* Tela de abertura só no celular: a mesma arte em tela cheia, com um
           degradê esmaecendo para a cor da página lá embaixo e uma seta que
           rola suavemente até o formulário de login. */}
-      <div className="relative flex h-[100svh] flex-col justify-between overflow-hidden bg-background p-6 pt-10 pb-6 lg:hidden">
+      <div
+        ref={heroRef}
+        className="relative flex h-[100svh] flex-col justify-between overflow-hidden bg-background p-6 pt-10 pb-6 lg:hidden"
+      >
         <img
           src="/login-art.jpg"
           alt=""
@@ -134,16 +155,24 @@ function Login() {
               </span>
             ))}
           </div>
-          <button
-            type="button"
-            onClick={irParaLogin}
-            aria-label="Ir para o login"
-            className="flex size-11 animate-bounce items-center justify-center rounded-full bg-white/10 ring-1 ring-white/25 transition-colors hover:bg-white/20"
-          >
-            <ChevronDown className="size-5 text-white" />
-          </button>
         </div>
       </div>
+
+      {/* Botão flutuante só no celular: desce até o login, e vira "voltar
+          ao topo" (girando 180°) assim que a abertura sai de vista. */}
+      <button
+        type="button"
+        onClick={passouDaAbertura ? irParaTopo : irParaLogin}
+        aria-label={passouDaAbertura ? "Voltar ao topo" : "Ir para o login"}
+        className={[
+          "fixed bottom-6 left-1/2 z-20 flex size-11 -translate-x-1/2 items-center justify-center rounded-full",
+          "border border-border bg-background/90 text-foreground shadow-lg backdrop-blur",
+          "transition-transform duration-300 ease-out hover:bg-secondary lg:hidden",
+          passouDaAbertura ? "rotate-180" : "animate-bounce",
+        ].join(" ")}
+      >
+        <ChevronDown className="size-5" />
+      </button>
 
       <div className="grid grid-rows-[1fr] lg:min-h-screen lg:grid-cols-2">
       {/* Painel da esquerda: arte + texto. A arte dissolve na cor da página
@@ -248,15 +277,26 @@ function Login() {
                   Esqueci minha senha
                 </Link>
               </div>
-              <Input
-                id="senha"
-                type="password"
-                required
-                autoComplete="current-password"
-                value={senha}
-                onChange={(e) => setSenha(e.target.value)}
-                placeholder="••••••••"
-              />
+              <div className="relative">
+                <Input
+                  id="senha"
+                  type={mostrarSenha ? "text" : "password"}
+                  required
+                  autoComplete="current-password"
+                  value={senha}
+                  onChange={(e) => setSenha(e.target.value)}
+                  placeholder="••••••••"
+                  className="pr-9"
+                />
+                <button
+                  type="button"
+                  onClick={() => setMostrarSenha((v) => !v)}
+                  aria-label={mostrarSenha ? "Ocultar senha" : "Mostrar senha"}
+                  className="absolute inset-y-0 right-0 flex w-9 items-center justify-center text-muted-foreground hover:text-foreground"
+                >
+                  {mostrarSenha ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+                </button>
+              </div>
             </div>
             <Button type="submit" className="w-full" disabled={enviando}>
               {enviando ? "Entrando…" : "Entrar"}
