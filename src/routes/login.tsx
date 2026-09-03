@@ -86,16 +86,16 @@ function Login() {
           className="absolute inset-0 h-full w-full object-cover object-[70%_center]"
           style={{
             maskImage:
-              "linear-gradient(to bottom, #000 0%, #000 72%, rgba(0,0,0,0.45) 88%, rgba(0,0,0,0) 100%)",
+              "linear-gradient(to bottom, #000 0%, #000 62%, rgba(0,0,0,0.35) 82%, rgba(0,0,0,0) 96%)",
             WebkitMaskImage:
-              "linear-gradient(to bottom, #000 0%, #000 72%, rgba(0,0,0,0.45) 88%, rgba(0,0,0,0) 100%)",
+              "linear-gradient(to bottom, #000 0%, #000 62%, rgba(0,0,0,0.35) 82%, rgba(0,0,0,0) 96%)",
           }}
         />
         <div
           className="absolute inset-0"
           style={{
             backgroundImage:
-              "linear-gradient(to bottom, rgba(8,32,54,0.55) 0%, rgba(8,32,54,0.4) 35%, rgba(8,32,54,0.75) 80%, rgba(8,32,54,0.92) 100%)",
+              "linear-gradient(to bottom, rgba(8,32,54,0.55) 0%, rgba(8,32,54,0.4) 30%, rgba(8,32,54,0.78) 62%, rgba(8,32,54,0.6) 82%, rgba(8,32,54,0) 100%)",
           }}
         />
 
