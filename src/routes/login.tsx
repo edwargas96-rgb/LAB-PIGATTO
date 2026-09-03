@@ -131,14 +131,14 @@ function Login() {
       </div>
 
       {/* Painel da direita: logo em destaque + formulário. */}
-      <div className="flex items-center justify-center overflow-y-auto px-6 py-12">
-        <div className="w-full max-w-sm lg:mt-6">
-          <div className="mb-5 flex justify-center">
+      <div className="flex items-center justify-center overflow-y-auto px-6 py-8">
+        <div className="w-full max-w-sm">
+          <div className="mb-3 flex justify-center">
             {/* O arquivo da logo tem uma placa de fundo. O véu com sombra
                 interna na cor da página esfuma as bordas do retângulo, para
                 a logo não aparecer como um quadrado colado na tela. */}
             <div className="relative">
-              <img src="https://i.imgur.com/EjkPuVQ.png" alt="LAB PIGATTO" className="h-56 w-auto" />
+              <img src="https://i.imgur.com/EjkPuVQ.png" alt="LAB PIGATTO" className="h-44 w-auto" />
               <div
                 aria-hidden="true"
                 className="pointer-events-none absolute inset-0"
@@ -152,7 +152,7 @@ function Login() {
             Acesso das clínicas e dentistas parceiros. Use o e-mail e a senha do seu cadastro.
           </p>
 
-          <form onSubmit={entrar} className="mt-6 space-y-4">
+          <form onSubmit={entrar} className="mt-5 space-y-3.5">
             <div className="space-y-1.5">
               <Label htmlFor="email">E-mail</Label>
               <Input
@@ -187,7 +187,7 @@ function Login() {
             </Button>
           </form>
 
-          <div className="mt-8 border-t border-border pt-6">
+          <div className="mt-6 border-t border-border pt-5">
             <p className="text-center text-xs text-muted-foreground">
               Ainda não tem acesso? Fale com a gente e solicite o cadastro da sua clínica.
             </p>
