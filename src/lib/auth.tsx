@@ -11,6 +11,7 @@ export type AuthState = {
   role: Perfil | null;
   clinicId: string | null;
   clinicNome: string | null;
+  clinicAtiva: boolean | null;
   nomeCompleto: string | null;
   loading: boolean;
   refresh: () => Promise<void>;
@@ -24,6 +25,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [role, setRole] = useState<Perfil | null>(null);
   const [clinicId, setClinicId] = useState<string | null>(null);
   const [clinicNome, setClinicNome] = useState<string | null>(null);
+  const [clinicAtiva, setClinicAtiva] = useState<boolean | null>(null);
   const [nomeCompleto, setNomeCompleto] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -32,6 +34,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setRole(null);
       setClinicId(null);
       setClinicNome(null);
+      setClinicAtiva(null);
       setNomeCompleto(null);
       return;
     }
@@ -39,17 +42,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       supabase.from("user_roles").select("role").eq("user_id", uid),
       supabase
         .from("profiles")
-        .select("nome_completo, clinic_id, clinics(nome)")
+        .select("nome_completo, clinic_id, clinics(nome, ativo)")
         .eq("id", uid)
         .maybeSingle(),
     ]);
     const isLab = (roles ?? []).some((r) => r.role === "laboratorio");
+    const clinica = (profile as unknown as { clinics?: { nome: string; ativo: boolean } | null })
+      ?.clinics;
     setRole(isLab ? "laboratorio" : "clinica");
     setNomeCompleto(profile?.nome_completo ?? null);
     setClinicId(profile?.clinic_id ?? null);
-    setClinicNome(
-      (profile as unknown as { clinics?: { nome: string } | null })?.clinics?.nome ?? null,
-    );
+    setClinicNome(clinica?.nome ?? null);
+    setClinicAtiva(clinica?.ativo ?? null);
   }
 
   useEffect(() => {
@@ -62,6 +66,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setRole(null);
         setClinicId(null);
         setClinicNome(null);
+        setClinicAtiva(null);
         setNomeCompleto(null);
       } else if (novaSessao?.user) {
         void carregarPerfil(novaSessao.user.id);
@@ -89,6 +94,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     role,
     clinicId,
     clinicNome,
+    clinicAtiva,
     nomeCompleto,
     loading,
     refresh: async () => {
