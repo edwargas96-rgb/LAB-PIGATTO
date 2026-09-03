@@ -10,6 +10,7 @@ import {
   CalendarDays,
   Building2,
   Settings,
+  UserCircle,
   LogOut,
   Menu,
   X,
@@ -20,6 +21,8 @@ import { cn } from "@/lib/utils";
 const navPainel = [
   { to: "/dashboard", label: "Painel", icon: LayoutDashboard },
 ] as const;
+
+const navPerfil = [{ to: "/perfil", label: "Meu perfil", icon: UserCircle }] as const;
 
 // Abrir ordens é exclusivo das clínicas/dentistas; o laboratório apenas analisa.
 const navClinica = [
@@ -59,8 +62,8 @@ export function AppLayout({
 
   const itens =
     role === "laboratorio"
-      ? [...navPainel, ...navLab]
-      : [...navPainel, ...navClinica, ...navCalendario];
+      ? [...navPainel, ...navLab, ...navPerfil]
+      : [...navPainel, ...navClinica, ...navCalendario, ...navPerfil];
 
   const sair = async () => {
     await signOut();

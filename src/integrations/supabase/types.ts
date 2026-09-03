@@ -411,18 +411,21 @@ export type Database = {
         Row: {
           clinic_id: string | null
           created_at: string
+          email: string | null
           id: string
           nome_completo: string
         }
         Insert: {
           clinic_id?: string | null
           created_at?: string
+          email?: string | null
           id: string
           nome_completo?: string
         }
         Update: {
           clinic_id?: string | null
           created_at?: string
+          email?: string | null
           id?: string
           nome_completo?: string
         }
