@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { Plus, UserPlus } from "lucide-react";
+import { Plus, UserPlus, Check, X } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
@@ -17,7 +17,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { criarAcessoClinica } from "@/lib/clinicas.functions";
+import { criarAcessoClinica, recusarClinica } from "@/lib/clinicas.functions";
 
 export const Route = createFileRoute("/_app/clinicas")({
   head: () => ({
@@ -88,6 +88,34 @@ function Clinicas() {
     queryClient.invalidateQueries({ queryKey: ["clinicas"] });
   };
 
+  const pendentes = clinicas.filter((c) => !c.ativo);
+  const ativas = clinicas.filter((c) => c.ativo);
+
+  const aprovarClinica = async (id: string, nomeClinica: string) => {
+    const { error } = await supabase.from("clinics").update({ ativo: true }).eq("id", id);
+    if (error) {
+      toast.error("Não foi possível aprovar a clínica.");
+      return;
+    }
+    toast.success(`${nomeClinica} aprovada`);
+    queryClient.invalidateQueries({ queryKey: ["clinicas"] });
+  };
+
+  const recusar = async (id: string, nomeClinica: string) => {
+    if (
+      !window.confirm(`Recusar o cadastro de ${nomeClinica}? Isso apaga o cadastro e o acesso criado.`)
+    ) {
+      return;
+    }
+    try {
+      await recusarClinica({ data: { clinic_id: id } });
+      toast.success("Cadastro recusado");
+      queryClient.invalidateQueries({ queryKey: ["clinicas"] });
+    } catch {
+      toast.error("Não foi possível recusar o cadastro.");
+    }
+  };
+
   const criarAcesso = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!acessoPara) return;
@@ -127,16 +155,47 @@ function Clinicas() {
         </Button>
       }
     >
+      {!isLoading && pendentes.length > 0 && (
+        <div className="mb-5 overflow-hidden rounded-xl border border-primary/30 bg-primary-soft/30 shadow-[var(--shadow-card)]">
+          <h2 className="border-b border-primary/20 px-4 py-3 text-sm font-semibold tracking-[0.08em] text-primary uppercase">
+            Cadastros pendentes de aprovação
+          </h2>
+          <ul className="divide-y divide-primary/15">
+            {pendentes.map((c) => (
+              <li
+                key={c.id}
+                className="flex flex-col gap-2 px-4 py-4 sm:flex-row sm:items-center sm:gap-4"
+              >
+                <div className="min-w-0 flex-1">
+                  <div className="truncate font-medium">{c.nome}</div>
+                  <div className="truncate text-sm text-muted-foreground">
+                    {[c.responsavel, c.email, c.telefone].filter(Boolean).join(" · ") || "—"}
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <Button size="sm" onClick={() => aprovarClinica(c.id, c.nome)}>
+                    <Check className="size-4" /> Aprovar
+                  </Button>
+                  <Button variant="outline" size="sm" onClick={() => recusar(c.id, c.nome)}>
+                    <X className="size-4" /> Recusar
+                  </Button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
       <div className="overflow-hidden rounded-xl border border-border bg-card shadow-[var(--shadow-card)]">
         {isLoading ? (
           <p className="p-6 text-sm text-muted-foreground">Carregando…</p>
-        ) : clinicas.length === 0 ? (
+        ) : ativas.length === 0 ? (
           <p className="p-8 text-center text-sm text-muted-foreground">
             Nenhuma clínica cadastrada ainda.
           </p>
         ) : (
           <ul className="divide-y divide-border">
-            {clinicas.map((c) => (
+            {ativas.map((c) => (
               <li
                 key={c.id}
                 className="flex flex-col gap-2 px-4 py-4 sm:flex-row sm:items-center sm:gap-4"

@@ -4,9 +4,11 @@ import { toast } from "sonner";
 import { Camera, ChevronDown, Clock, Eye, EyeOff, Upload } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
+import { cadastrarClinicaPublico } from "@/lib/cadastro.functions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { cn } from "@/lib/utils";
 
 const WHATSAPP_NUMERO = "5541991071492";
 
@@ -48,6 +50,7 @@ function Login() {
   const [senha, setSenha] = useState("");
   const [mostrarSenha, setMostrarSenha] = useState(false);
   const [enviando, setEnviando] = useState(false);
+  const [modo, setModo] = useState<"entrar" | "cadastrar">("entrar");
   const loginRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLDivElement>(null);
   const [passouDaAbertura, setPassouDaAbertura] = useState(false);
@@ -250,60 +253,90 @@ function Login() {
             </div>
           </div>
 
-          <h1 className="text-center text-2xl font-semibold">Entrar</h1>
-          <p className="mx-auto mt-1.5 max-w-[19rem] text-center text-sm text-muted-foreground">
-            Acesso das clínicas e dentistas parceiros. Use o e-mail e a senha do seu cadastro.
-          </p>
+          <div className="mx-auto flex w-full max-w-[15rem] rounded-lg bg-secondary p-1 text-sm">
+            <button
+              type="button"
+              onClick={() => setModo("entrar")}
+              className={cn(
+                "flex-1 rounded-md py-1.5 font-medium transition-colors",
+                modo === "entrar" ? "bg-card text-foreground shadow-sm" : "text-muted-foreground",
+              )}
+            >
+              Entrar
+            </button>
+            <button
+              type="button"
+              onClick={() => setModo("cadastrar")}
+              className={cn(
+                "flex-1 rounded-md py-1.5 font-medium transition-colors",
+                modo === "cadastrar"
+                  ? "bg-card text-foreground shadow-sm"
+                  : "text-muted-foreground",
+              )}
+            >
+              Cadastrar clínica
+            </button>
+          </div>
 
-          <form onSubmit={entrar} className="mt-5 space-y-3.5">
-            <div className="space-y-1.5">
-              <Label htmlFor="email">E-mail</Label>
-              <Input
-                id="email"
-                type="email"
-                required
-                autoComplete="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="clinica@exemplo.com.br"
-              />
-            </div>
-            <div className="space-y-1.5">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="senha">Senha</Label>
-                <Link to="/recuperar-senha" className="text-xs text-primary hover:underline">
-                  Esqueci minha senha
-                </Link>
-              </div>
-              <div className="relative">
-                <Input
-                  id="senha"
-                  type={mostrarSenha ? "text" : "password"}
-                  required
-                  autoComplete="current-password"
-                  value={senha}
-                  onChange={(e) => setSenha(e.target.value)}
-                  placeholder="••••••••"
-                  className="pr-9"
-                />
-                <button
-                  type="button"
-                  onClick={() => setMostrarSenha((v) => !v)}
-                  aria-label={mostrarSenha ? "Ocultar senha" : "Mostrar senha"}
-                  className="absolute inset-y-0 right-0 flex w-9 items-center justify-center text-muted-foreground hover:text-foreground"
-                >
-                  {mostrarSenha ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
-                </button>
-              </div>
-            </div>
-            <Button type="submit" className="w-full" disabled={enviando}>
-              {enviando ? "Entrando…" : "Entrar"}
-            </Button>
-          </form>
+          {modo === "entrar" ? (
+            <>
+              <p className="mx-auto mt-4 max-w-[19rem] text-center text-sm text-muted-foreground">
+                Acesso das clínicas e dentistas parceiros. Use o e-mail e a senha do seu cadastro.
+              </p>
+
+              <form onSubmit={entrar} className="mt-5 space-y-3.5">
+                <div className="space-y-1.5">
+                  <Label htmlFor="email">E-mail</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    required
+                    autoComplete="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="clinica@exemplo.com.br"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="senha">Senha</Label>
+                    <Link to="/recuperar-senha" className="text-xs text-primary hover:underline">
+                      Esqueci minha senha
+                    </Link>
+                  </div>
+                  <div className="relative">
+                    <Input
+                      id="senha"
+                      type={mostrarSenha ? "text" : "password"}
+                      required
+                      autoComplete="current-password"
+                      value={senha}
+                      onChange={(e) => setSenha(e.target.value)}
+                      placeholder="••••••••"
+                      className="pr-9"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setMostrarSenha((v) => !v)}
+                      aria-label={mostrarSenha ? "Ocultar senha" : "Mostrar senha"}
+                      className="absolute inset-y-0 right-0 flex w-9 items-center justify-center text-muted-foreground hover:text-foreground"
+                    >
+                      {mostrarSenha ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+                    </button>
+                  </div>
+                </div>
+                <Button type="submit" className="w-full" disabled={enviando}>
+                  {enviando ? "Entrando…" : "Entrar"}
+                </Button>
+              </form>
+            </>
+          ) : (
+            <CadastroClinicaForm onCadastrado={() => setModo("entrar")} />
+          )}
 
           <div className="mt-6 border-t border-border pt-5">
             <p className="text-center text-xs text-muted-foreground">
-              Ainda não tem acesso? Fale conosco e solicite o cadastro da sua clínica.
+              Já tem cadastro e não consegue acessar? Fale conosco.
             </p>
             <a
               href={WHATSAPP}
@@ -321,5 +354,137 @@ function Login() {
       </div>
       </div>
     </div>
+  );
+}
+
+// ------------------------------------------------------------ Cadastro de clínica
+function CadastroClinicaForm({ onCadastrado }: { onCadastrado: () => void }) {
+  const [clinica, setClinica] = useState("");
+  const [responsavel, setResponsavel] = useState("");
+  const [telefone, setTelefone] = useState("");
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
+  const [mostrarSenha, setMostrarSenha] = useState(false);
+  const [enviando, setEnviando] = useState(false);
+  const [enviado, setEnviado] = useState(false);
+
+  const cadastrar = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (senha.length < 8) {
+      toast.error("A senha precisa ter pelo menos 8 caracteres.");
+      return;
+    }
+    setEnviando(true);
+    try {
+      await cadastrarClinicaPublico({
+        data: {
+          clinica: clinica.trim(),
+          responsavel: responsavel.trim(),
+          telefone: telefone.trim() || undefined,
+          email: email.trim(),
+          senha,
+        },
+      });
+      setEnviado(true);
+    } catch (err) {
+      toast.error("Não foi possível cadastrar", {
+        description: err instanceof Error ? err.message : undefined,
+      });
+    } finally {
+      setEnviando(false);
+    }
+  };
+
+  if (enviado) {
+    return (
+      <div className="mt-5 rounded-xl border border-primary/30 bg-primary-soft/40 p-5 text-center">
+        <h2 className="text-base font-semibold">Cadastro enviado!</h2>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Assim que o laboratório aprovar, você já pode entrar com o e-mail e a senha que
+          cadastrou.
+        </p>
+        <Button variant="outline" className="mt-4" onClick={onCadastrado}>
+          Voltar para o login
+        </Button>
+      </div>
+    );
+  }
+
+  return (
+    <form onSubmit={cadastrar} className="mt-5 space-y-3.5">
+      <div className="space-y-1.5">
+        <Label htmlFor="clinica">Nome da clínica *</Label>
+        <Input
+          id="clinica"
+          required
+          maxLength={120}
+          value={clinica}
+          onChange={(e) => setClinica(e.target.value)}
+          placeholder="Clínica Sorriso"
+        />
+      </div>
+      <div className="space-y-1.5">
+        <Label htmlFor="responsavel">Seu nome *</Label>
+        <Input
+          id="responsavel"
+          required
+          maxLength={120}
+          value={responsavel}
+          onChange={(e) => setResponsavel(e.target.value)}
+        />
+      </div>
+      <div className="space-y-1.5">
+        <Label htmlFor="telefone-cadastro">Telefone</Label>
+        <Input
+          id="telefone-cadastro"
+          maxLength={30}
+          value={telefone}
+          onChange={(e) => setTelefone(e.target.value)}
+          placeholder="(00) 00000-0000"
+        />
+      </div>
+      <div className="space-y-1.5">
+        <Label htmlFor="email-cadastro">E-mail *</Label>
+        <Input
+          id="email-cadastro"
+          type="email"
+          required
+          maxLength={255}
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="clinica@exemplo.com.br"
+        />
+      </div>
+      <div className="space-y-1.5">
+        <Label htmlFor="senha-cadastro">Senha *</Label>
+        <div className="relative">
+          <Input
+            id="senha-cadastro"
+            type={mostrarSenha ? "text" : "password"}
+            required
+            minLength={8}
+            autoComplete="new-password"
+            value={senha}
+            onChange={(e) => setSenha(e.target.value)}
+            placeholder="Mínimo de 8 caracteres"
+            className="pr-9"
+          />
+          <button
+            type="button"
+            onClick={() => setMostrarSenha((v) => !v)}
+            aria-label={mostrarSenha ? "Ocultar senha" : "Mostrar senha"}
+            className="absolute inset-y-0 right-0 flex w-9 items-center justify-center text-muted-foreground hover:text-foreground"
+          >
+            {mostrarSenha ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+          </button>
+        </div>
+      </div>
+      <Button type="submit" className="w-full" disabled={enviando}>
+        {enviando ? "Enviando…" : "Cadastrar clínica"}
+      </Button>
+      <p className="text-center text-xs text-muted-foreground">
+        Seu acesso fica pendente até o laboratório aprovar o cadastro.
+      </p>
+    </form>
   );
 }
