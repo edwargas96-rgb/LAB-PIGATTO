@@ -265,7 +265,7 @@ function Login() {
 
           <div className="mt-6 border-t border-border pt-5">
             <p className="text-center text-xs text-muted-foreground">
-              Ainda não tem acesso? Fale com a gente e solicite o cadastro da sua clínica.
+              Ainda não tem acesso? Fale conosco e solicite o cadastro da sua clínica.
             </p>
             <a
               href={WHATSAPP}
