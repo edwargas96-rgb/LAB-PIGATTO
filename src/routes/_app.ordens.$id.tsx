@@ -4,7 +4,9 @@ import { useEffect, useState } from "react";
 import { ArrowLeft, Download, FileText, MessageSquare } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { criarDownloadWasabi } from "@/lib/arquivos.functions";
 import { useAuth } from "@/lib/auth";
+import type { Tables } from "@/integrations/supabase/types";
 import { AppLayout } from "@/components/AppLayout";
 import { StatusBadge } from "@/components/StatusBadge";
 import { Odontograma } from "@/components/Odontograma";
@@ -98,15 +100,23 @@ function DetalheOrdem() {
     },
   });
 
-  const baixar = async (path: string, nome: string) => {
-    const { data, error } = await supabase.storage.from("ordens").createSignedUrl(path, 60, {
-      download: nome,
-    });
-    if (error || !data) {
+  const baixar = async (arquivo: Tables<"order_files">) => {
+    try {
+      if (arquivo.storage_provider === "wasabi") {
+        const { url } = await criarDownloadWasabi({
+          data: { orderId: id, path: arquivo.storage_path, nomeArquivo: arquivo.nome_arquivo },
+        });
+        window.open(url, "_blank", "noopener,noreferrer");
+        return;
+      }
+      const { data, error } = await supabase.storage
+        .from("ordens")
+        .createSignedUrl(arquivo.storage_path, 60, { download: arquivo.nome_arquivo });
+      if (error || !data) throw error;
+      window.open(data.signedUrl, "_blank", "noopener,noreferrer");
+    } catch {
       toast.error("Não foi possível gerar o link do arquivo.");
-      return;
     }
-    window.open(data.signedUrl, "_blank", "noopener,noreferrer");
   };
 
   const atualizarStatus = async () => {
@@ -303,7 +313,7 @@ function DetalheOrdem() {
                           <button
                             type="button"
                             aria-label={`Baixar ${a.nome_arquivo}`}
-                            onClick={() => baixar(a.storage_path, a.nome_arquivo)}
+                            onClick={() => baixar(a)}
                           >
                             <Download className="size-4 text-muted-foreground hover:text-primary" />
                           </button>
@@ -318,7 +328,7 @@ function DetalheOrdem() {
                       <li key={f.id}>
                         <button
                           type="button"
-                          onClick={() => baixar(f.storage_path, f.nome_arquivo)}
+                          onClick={() => baixar(f)}
                           className="flex aspect-square w-full flex-col items-center justify-center gap-1 rounded-lg border border-border bg-secondary text-xs text-muted-foreground transition-colors hover:border-primary"
                         >
                           <Download className="size-4 text-primary" />
