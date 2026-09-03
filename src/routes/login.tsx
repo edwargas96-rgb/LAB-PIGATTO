@@ -93,9 +93,12 @@ function Login() {
         />
 
         <div className="relative flex h-full flex-col justify-between p-12 xl:p-14">
-          <span className="text-[11px] font-medium tracking-[0.22em] text-white/55 uppercase">
-            Portal do dentista
-          </span>
+          <div className="flex items-center gap-2.5">
+            <img src="https://i.imgur.com/dvmZg1a.png" alt="" aria-hidden="true" className="h-6 w-auto" />
+            <span className="text-[11px] font-medium tracking-[0.22em] text-white/55 uppercase">
+              Portal do dentista
+            </span>
+          </div>
 
           <div className="max-w-[24rem] xl:max-w-[26rem]">
             <h2 className="font-display text-[2rem] leading-[1.15] font-bold text-white xl:text-[2.3rem]">
@@ -130,12 +133,12 @@ function Login() {
       {/* Painel da direita: logo em destaque + formulário. */}
       <div className="flex items-center justify-center overflow-y-auto px-6 py-12">
         <div className="w-full max-w-sm lg:mt-6">
-          <div className="mb-8 flex justify-center">
+          <div className="mb-5 flex justify-center">
             {/* O arquivo da logo tem uma placa de fundo. O véu com sombra
                 interna na cor da página esfuma as bordas do retângulo, para
                 a logo não aparecer como um quadrado colado na tela. */}
             <div className="relative">
-              <img src="https://i.imgur.com/i8WDIdd.png" alt="LAB PIGATTO" className="h-40 w-auto" />
+              <img src="https://i.imgur.com/EjkPuVQ.png" alt="LAB PIGATTO" className="h-56 w-auto" />
               <div
                 aria-hidden="true"
                 className="pointer-events-none absolute inset-0"
@@ -145,11 +148,11 @@ function Login() {
           </div>
 
           <h1 className="text-center text-2xl font-semibold">Entrar</h1>
-          <p className="mx-auto mt-2 max-w-[19rem] text-center text-sm text-muted-foreground">
+          <p className="mx-auto mt-1.5 max-w-[19rem] text-center text-sm text-muted-foreground">
             Acesso das clínicas e dentistas parceiros. Use o e-mail e a senha do seu cadastro.
           </p>
 
-          <form onSubmit={entrar} className="mt-8 space-y-4">
+          <form onSubmit={entrar} className="mt-6 space-y-4">
             <div className="space-y-1.5">
               <Label htmlFor="email">E-mail</Label>
               <Input
