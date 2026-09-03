@@ -236,6 +236,7 @@ export type Database = {
           nome_arquivo: string
           order_id: string
           storage_path: string
+          storage_provider: string
           tamanho: number | null
           tipo: string
         }
@@ -245,6 +246,7 @@ export type Database = {
           nome_arquivo: string
           order_id: string
           storage_path: string
+          storage_provider?: string
           tamanho?: number | null
           tipo: string
         }
@@ -254,6 +256,7 @@ export type Database = {
           nome_arquivo?: string
           order_id?: string
           storage_path?: string
+          storage_provider?: string
           tamanho?: number | null
           tipo?: string
         }

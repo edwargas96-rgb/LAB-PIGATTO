@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { CalendarIcon, Upload, X, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { criarUploadWasabi } from "@/lib/arquivos.functions";
 import { useAuth } from "@/lib/auth";
 import { AppLayout } from "@/components/AppLayout";
 import { Odontograma } from "@/components/Odontograma";
@@ -158,13 +159,25 @@ function NovaOrdem() {
 
       const enviarArquivos = async (lista: File[], tipo: "arquivo" | "foto") => {
         for (const file of lista) {
-          const path = `${ordem.id}/${tipo}s/${crypto.randomUUID()}-${file.name.replace(/[^\w.\-]/g, "_")}`;
-          const { error: upErr } = await supabase.storage.from("ordens").upload(path, file);
-          if (upErr) throw upErr;
+          const { url, path } = await criarUploadWasabi({
+            data: {
+              orderId: ordem.id,
+              tipo,
+              nomeArquivo: file.name,
+              contentType: file.type || "application/octet-stream",
+            },
+          });
+          const upResp = await fetch(url, {
+            method: "PUT",
+            headers: { "Content-Type": file.type || "application/octet-stream" },
+            body: file,
+          });
+          if (!upResp.ok) throw new Error("Falha ao enviar o arquivo.");
           const { error: insErr } = await supabase.from("order_files").insert({
             order_id: ordem.id,
             tipo,
             storage_path: path,
+            storage_provider: "wasabi",
             nome_arquivo: file.name,
             tamanho: file.size,
           });
