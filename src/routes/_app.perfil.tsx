@@ -49,7 +49,9 @@ function Perfil() {
               <dd className="font-medium">{email}</dd>
             </div>
             <div className="flex justify-between gap-4">
-              <dt className="text-muted-foreground">Perfil</dt>
+              <dt className="text-muted-foreground">
+                {role === "laboratorio" ? "Perfil" : "Vinculado a"}
+              </dt>
               <dd className="font-medium">
                 {role === "laboratorio" ? "Laboratório" : clinicNome || "Clínica"}
               </dd>
