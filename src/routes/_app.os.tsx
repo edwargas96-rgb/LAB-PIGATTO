@@ -176,15 +176,17 @@ function OrdensPage() {
             <Button size="sm" variant="secondary" onClick={avancarLote}>
               Marcar como entregue
             </Button>
-            <Button size="sm" variant="outline" onClick={enviarSelecaoParaLixeira}>
-              <Trash2 className="size-4" /> Enviar para lixeira
-            </Button>
-            <button
-              onClick={() => setSel(new Set())}
-              className="ml-auto text-sm text-muted-foreground hover:text-foreground"
-            >
-              Limpar
-            </button>
+            <span className="ml-auto flex items-center gap-3">
+              <Button size="sm" variant="outline" onClick={enviarSelecaoParaLixeira}>
+                <Trash2 className="size-4" /> Enviar para lixeira
+              </Button>
+              <button
+                onClick={() => setSel(new Set())}
+                className="text-sm text-muted-foreground hover:text-foreground"
+              >
+                Limpar
+              </button>
+            </span>
           </div>
         )}
 
