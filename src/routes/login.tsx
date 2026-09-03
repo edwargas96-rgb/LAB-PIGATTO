@@ -121,7 +121,7 @@ function Login() {
         />
 
         <div className="relative flex flex-col items-center gap-2">
-          <img src="https://i.imgur.com/dvmZg1a.png" alt="" aria-hidden="true" className="h-7 w-auto" />
+          <img src="/logo-symbol.png" alt="" aria-hidden="true" className="h-7 w-auto" />
           <span className="text-[11px] font-medium tracking-[0.3em] text-white/70 uppercase">
             Portal do dentista
           </span>
@@ -197,7 +197,7 @@ function Login() {
 
         <div className="relative flex h-full flex-col justify-between p-12 xl:p-14">
           <div className="flex items-center gap-2.5">
-            <img src="https://i.imgur.com/dvmZg1a.png" alt="" aria-hidden="true" className="h-6 w-auto" />
+            <img src="/logo-symbol.png" alt="" aria-hidden="true" className="h-6 w-auto" />
             <span className="text-[11px] font-medium tracking-[0.22em] text-white/55 uppercase">
               Portal do dentista
             </span>
