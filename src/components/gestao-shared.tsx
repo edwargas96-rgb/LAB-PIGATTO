@@ -24,8 +24,12 @@ export type OS = {
   laboratorio_destino: string | null;
   entregue_em: string | null;
   clinic_id: string;
+  deleted_at: string | null;
   clinics: { nome: string } | null;
 };
+
+const COLUNAS_OS =
+  "id, numero, paciente, dentista, item, elementos, cor, data_entrega, observacoes, created_at, lab_status, urgencia, convenio, resposta_laboratorio, laboratorio_destino, entregue_em, clinic_id, deleted_at, clinics(nome)";
 
 export function useOrdens() {
   return useQuery({
@@ -33,14 +37,44 @@ export function useOrdens() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("orders")
-        .select(
-          "id, numero, paciente, dentista, item, elementos, cor, data_entrega, observacoes, created_at, lab_status, urgencia, convenio, resposta_laboratorio, laboratorio_destino, entregue_em, clinic_id, clinics(nome)",
-        )
+        .select(COLUNAS_OS)
+        .is("deleted_at", null)
         .order("created_at", { ascending: false });
       if (error) throw error;
       return (data ?? []) as unknown as OS[];
     },
   });
+}
+
+// Ordens enviadas para a lixeira pelo laboratório — somem das listas e da
+// visão da clínica, mas ficam recuperáveis por 7 dias antes de serem
+// apagadas de vez por um job agendado no banco.
+export function useOrdensLixeira() {
+  return useQuery({
+    queryKey: ["gestao-ordens-lixeira"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("orders")
+        .select(COLUNAS_OS)
+        .not("deleted_at", "is", null)
+        .order("deleted_at", { ascending: false });
+      if (error) throw error;
+      return (data ?? []) as unknown as OS[];
+    },
+  });
+}
+
+export async function enviarParaLixeira(ids: string[]) {
+  const { error } = await supabase
+    .from("orders")
+    .update({ deleted_at: new Date().toISOString() })
+    .in("id", ids);
+  if (error) throw error;
+}
+
+export async function restaurarDaLixeira(id: string) {
+  const { error } = await supabase.from("orders").update({ deleted_at: null }).eq("id", id);
+  if (error) throw error;
 }
 
 export function StatusSelo({ status }: { status: LabStatus }) {

@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
-import { Search, Plus, Printer, Loader2, MessageSquare } from "lucide-react";
+import { Search, Plus, Printer, Loader2, MessageSquare, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
@@ -34,6 +34,7 @@ import {
   Kpi,
   prazoChip,
   registrarEvento,
+  enviarParaLixeira,
 } from "@/components/gestao-shared";
 
 export const Route = createFileRoute("/_app/os")({
@@ -109,6 +110,21 @@ function OrdensPage() {
     invalidate();
   };
 
+  const enviarSelecaoParaLixeira = async () => {
+    const quantidade = sel.size;
+    if (!window.confirm(`Enviar ${quantidade} O.S. para a lixeira? Elas somem das listas agora e ficam recuperáveis por 7 dias.`)) {
+      return;
+    }
+    try {
+      await enviarParaLixeira(Array.from(sel));
+      toast.success("Enviada(s) para a lixeira");
+      setSel(new Set());
+      invalidate();
+    } catch {
+      toast.error("Não foi possível enviar para a lixeira.");
+    }
+  };
+
   return (
     <AppLayout
       titulo="Ordens de serviço"
@@ -159,6 +175,9 @@ function OrdensPage() {
             <span className="numeric text-sm font-medium">{sel.size} selecionada(s)</span>
             <Button size="sm" variant="secondary" onClick={avancarLote}>
               Marcar como entregue
+            </Button>
+            <Button size="sm" variant="outline" onClick={enviarSelecaoParaLixeira}>
+              <Trash2 className="size-4" /> Enviar para lixeira
             </Button>
             <button
               onClick={() => setSel(new Set())}

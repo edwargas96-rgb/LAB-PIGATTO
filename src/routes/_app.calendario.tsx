@@ -49,6 +49,7 @@ function Calendario() {
       const { data, error } = await supabase
         .from("orders")
         .select("id, numero, paciente, status, data_entrega")
+        .is("deleted_at", null)
         .gte("data_entrega", inicio)
         .lte("data_entrega", fim)
         .order("data_entrega");

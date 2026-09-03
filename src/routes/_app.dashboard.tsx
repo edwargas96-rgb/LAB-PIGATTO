@@ -44,6 +44,7 @@ function Dashboard() {
       const { data, error } = await supabase
         .from("orders")
         .select("id, numero, paciente, item, status, data_entrega, created_at, clinics(nome)")
+        .is("deleted_at", null)
         .order("created_at", { ascending: false });
       if (error) throw error;
       return (data ?? []) as unknown as OrdemLista[];
