@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { Camera, Clock, Upload } from "lucide-react";
+import { Camera, ChevronDown, Clock, Upload } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
@@ -47,6 +47,11 @@ function Login() {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [enviando, setEnviando] = useState(false);
+  const loginRef = useRef<HTMLDivElement>(null);
+
+  const irParaLogin = () => {
+    loginRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
 
   useEffect(() => {
     if (!loading && session) navigate({ to: "/dashboard", replace: true });
@@ -69,7 +74,78 @@ function Login() {
   };
 
   return (
-    <div className="grid min-h-screen grid-rows-[1fr] bg-background lg:grid-cols-2">
+    <div className="bg-background">
+      {/* Tela de abertura só no celular: a mesma arte em tela cheia, com um
+          degradê esmaecendo para a cor da página lá embaixo e uma seta que
+          rola suavemente até o formulário de login. */}
+      <div className="relative flex h-[100svh] flex-col justify-between overflow-hidden bg-background p-6 pt-10 pb-6 lg:hidden">
+        <img
+          src="/login-art.jpg"
+          alt=""
+          aria-hidden="true"
+          className="absolute inset-0 h-full w-full object-cover object-[70%_center]"
+          style={{
+            maskImage:
+              "linear-gradient(to bottom, #000 0%, #000 72%, rgba(0,0,0,0.45) 88%, rgba(0,0,0,0) 100%)",
+            WebkitMaskImage:
+              "linear-gradient(to bottom, #000 0%, #000 72%, rgba(0,0,0,0.45) 88%, rgba(0,0,0,0) 100%)",
+          }}
+        />
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage:
+              "linear-gradient(to bottom, rgba(8,32,54,0.55) 0%, rgba(8,32,54,0.4) 35%, rgba(8,32,54,0.75) 80%, rgba(8,32,54,0.92) 100%)",
+          }}
+        />
+
+        <div className="relative flex flex-col items-center gap-2">
+          <img src="/logo-symbol.png" alt="" aria-hidden="true" className="size-8" />
+          <span className="text-[11px] font-medium tracking-[0.3em] text-white/70 uppercase">
+            Portal do dentista
+          </span>
+        </div>
+
+        <div className="relative">
+          <h1 className="font-display text-[1.7rem] leading-[1.2] font-bold text-white">
+            Ordens de serviço com precisão clínica, do consultório à bancada.
+          </h1>
+
+          <div className="mt-6 h-px w-14 bg-white/25" />
+
+          <ul className="mt-6 space-y-3">
+            {DESTAQUES.map(({ icone: Icone, texto }) => (
+              <li key={texto} className="flex items-center gap-3 text-sm text-white/80">
+                <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-white/10 ring-1 ring-white/15">
+                  <Icone className="size-4 text-white/90" />
+                </span>
+                {texto}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="relative flex w-full min-w-0 flex-col items-center gap-4">
+          <div className="flex w-full min-w-0 flex-wrap items-center justify-center gap-x-2 gap-y-1 text-[10px] tracking-wide text-white/45">
+            {ETAPAS.map((etapa, i) => (
+              <span key={etapa} className="flex items-center gap-2 whitespace-nowrap">
+                {i > 0 && <span aria-hidden="true">→</span>}
+                {etapa}
+              </span>
+            ))}
+          </div>
+          <button
+            type="button"
+            onClick={irParaLogin}
+            aria-label="Ir para o login"
+            className="flex size-11 animate-bounce items-center justify-center rounded-full bg-white/10 ring-1 ring-white/25 transition-colors hover:bg-white/20"
+          >
+            <ChevronDown className="size-5 text-white" />
+          </button>
+        </div>
+      </div>
+
+      <div className="grid grid-rows-[1fr] lg:min-h-screen lg:grid-cols-2">
       {/* Painel da esquerda: arte + texto. A arte dissolve na cor da página
           à direita (máscara), para não haver corte seco entre as metades. */}
       <div className="relative hidden h-full overflow-hidden lg:block">
@@ -131,7 +207,7 @@ function Login() {
       </div>
 
       {/* Painel da direita: logo em destaque + formulário. */}
-      <div className="flex items-center justify-center overflow-y-auto px-6 py-8">
+      <div ref={loginRef} className="flex items-center justify-center overflow-y-auto px-6 py-8 lg:min-h-screen">
         <div className="w-full max-w-sm">
           <div className="mb-3 flex justify-center">
             {/* O arquivo da logo tem uma placa de fundo. O véu com sombra
@@ -204,6 +280,7 @@ function Login() {
             </a>
           </div>
         </div>
+      </div>
       </div>
     </div>
   );
