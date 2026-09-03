@@ -2,25 +2,27 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
-const criarAcessoSchema = z.object({
+const criarColaboradorSchema = z.object({
   email: z.string().trim().email().max(255),
   senha: z.string().min(8).max(72),
   nome_completo: z.string().trim().min(1).max(120),
-  clinic_id: z.string().uuid(),
 });
 
-export const criarAcessoClinica = createServerFn({ method: "POST" })
+// A própria clínica cadastra um dentista colaborador — mesmo processo que o
+// laboratório usa para criar o acesso da clínica, só que aqui o clinic_id
+// nunca vem do cliente: é sempre o da clínica de quem está logado.
+export const criarColaboradorClinica = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((data: unknown) => criarAcessoSchema.parse(data))
+  .inputValidator((data: unknown) => criarColaboradorSchema.parse(data))
   .handler(async ({ data, context }) => {
-    const { data: roles, error: rolesError } = await context.supabase
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", context.userId);
+    const { data: perfil, error: perfilError } = await context.supabase
+      .from("profiles")
+      .select("clinic_id")
+      .eq("id", context.userId)
+      .maybeSingle();
 
-    if (rolesError) throw new Error("Não foi possível validar suas permissões.");
-    if (!(roles ?? []).some((r) => r.role === "laboratorio")) {
-      throw new Error("Apenas o laboratório pode criar acessos.");
+    if (perfilError || !perfil?.clinic_id) {
+      throw new Error("Apenas uma conta de clínica pode adicionar colaboradores.");
     }
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -31,7 +33,7 @@ export const criarAcessoClinica = createServerFn({ method: "POST" })
       email_confirm: true,
       user_metadata: {
         nome_completo: data.nome_completo,
-        clinic_id: data.clinic_id,
+        clinic_id: perfil.clinic_id,
         role: "clinica",
       },
     });
@@ -44,7 +46,7 @@ export const criarAcessoClinica = createServerFn({ method: "POST" })
       {
         id: criado.user.id,
         nome_completo: data.nome_completo,
-        clinic_id: data.clinic_id,
+        clinic_id: perfil.clinic_id,
         email: data.email,
       },
       { onConflict: "id" },
