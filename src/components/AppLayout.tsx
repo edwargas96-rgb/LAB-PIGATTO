@@ -1,5 +1,7 @@
 import { useState, type ReactNode } from "react";
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import {
   LayoutDashboard,
   LayoutGrid,
@@ -60,10 +62,26 @@ export function AppLayout({
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [aberto, setAberto] = useState(false);
 
-  const itens =
-    role === "laboratorio"
-      ? [...navPainel, ...navLab, ...navPerfil]
-      : [...navPainel, ...navClinica, ...navCalendario, ...navPerfil];
+  const isLab = role === "laboratorio";
+
+  // Cadastros de clínica pendentes de aprovação, para o selo na aba "Clínicas".
+  const { data: clinicasPendentes = 0 } = useQuery({
+    queryKey: ["clinicas-pendentes-count"],
+    queryFn: async () => {
+      const { count, error } = await supabase
+        .from("clinics")
+        .select("id", { count: "exact", head: true })
+        .eq("ativo", false);
+      if (error) throw error;
+      return count ?? 0;
+    },
+    enabled: isLab,
+    refetchInterval: 60_000,
+  });
+
+  const itens = isLab
+    ? [...navPainel, ...navLab, ...navPerfil]
+    : [...navPainel, ...navClinica, ...navCalendario, ...navPerfil];
 
   const sair = async () => {
     await signOut();
@@ -87,7 +105,12 @@ export function AppLayout({
             )}
           >
             <item.icon className="size-4.5 shrink-0" />
-            {item.label}
+            <span className="min-w-0 flex-1 truncate">{item.label}</span>
+            {item.to === "/clinicas" && clinicasPendentes > 0 && (
+              <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-danger text-[11px] font-semibold text-danger-foreground">
+                {clinicasPendentes}
+              </span>
+            )}
           </Link>
         );
       })}

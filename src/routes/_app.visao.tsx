@@ -40,10 +40,10 @@ function VisaoGeral() {
     os: ordens.filter((o) => o.created_at.slice(0, 7) === m.chave).length,
   }));
 
-  const recebidas = ordens.filter((o) => o.lab_status === "Recebida").length;
+  const recebidas = ordens.filter((o) => o.lab_status === "Recebida" && !o.entregue_em).length;
   const entregues = ordens.filter((o) => o.lab_status === "Entregue").length;
   const atrasadas = ordens.filter(
-    (o) => o.lab_status === "Recebida" && diasRestantes(o.data_entrega) < 0,
+    (o) => o.lab_status === "Recebida" && !o.entregue_em && diasRestantes(o.data_entrega) < 0,
   ).length;
 
   const porClinica = useMemo(() => {

@@ -76,10 +76,10 @@ function OrdensPage() {
     });
   }, [ordens, filtro, busca]);
 
-  const recebidas = ordens.filter((o) => o.lab_status === "Recebida").length;
+  const recebidas = ordens.filter((o) => o.lab_status === "Recebida" && !o.entregue_em).length;
   const entregues = ordens.filter((o) => o.lab_status === "Entregue").length;
   const atrasadas = ordens.filter(
-    (o) => o.lab_status === "Recebida" && diasRestantes(o.data_entrega) < 0,
+    (o) => o.lab_status === "Recebida" && !o.entregue_em && diasRestantes(o.data_entrega) < 0,
   ).length;
 
   const toggle = (id: string) =>
@@ -233,7 +233,7 @@ function OrdensPage() {
                       </td>
                       <td className="px-3 py-3">{o.item ?? "—"}</td>
                       <td className="px-3 py-3">
-                        <StatusSelo status={o.lab_status} />
+                        <StatusSelo status={o.lab_status} entregueEm={o.entregue_em} />
                       </td>
                       <td className={cn("numeric px-3 py-3", p.cls)}>{p.texto}</td>
                     </tr>
@@ -336,7 +336,7 @@ function DetalheOS({ os, onClose, onChange }: { os: OS; onClose: () => void; onC
   };
 
   const acao =
-    os.lab_status === "Recebida" ? (
+    os.lab_status === "Recebida" && !os.entregue_em ? (
       <Button
         size="sm"
         disabled={salvando}
@@ -353,7 +353,7 @@ function DetalheOS({ os, onClose, onChange }: { os: OS; onClose: () => void; onC
           <div className="flex items-center justify-between gap-3 pr-6">
             <DialogTitle className="flex items-center gap-2">
               <span className="numeric text-primary">{os.numero}</span>
-              <StatusSelo status={os.lab_status} />
+              <StatusSelo status={os.lab_status} entregueEm={os.entregue_em} />
             </DialogTitle>
             <Button size="sm" variant="outline" onClick={imprimirFicha}>
               <Printer className="size-4" /> Ficha
