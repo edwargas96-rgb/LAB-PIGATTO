@@ -60,7 +60,10 @@ function Clinicas() {
         .from("clinics")
         .select("*")
         .order("nome");
-      if (error) throw error;
+      if (error) {
+        console.error(error);
+        throw error;
+      }
       return data ?? [];
     },
   });
@@ -76,6 +79,7 @@ function Clinicas() {
     });
     setSalvando(false);
     if (error) {
+      console.error(error);
       toast.error("Não foi possível cadastrar a clínica.");
       return;
     }
@@ -94,6 +98,7 @@ function Clinicas() {
   const aprovarClinica = async (id: string, nomeClinica: string) => {
     const { error } = await supabase.from("clinics").update({ ativo: true }).eq("id", id);
     if (error) {
+      console.error(error);
       toast.error("Não foi possível aprovar a clínica.");
       return;
     }
@@ -111,7 +116,8 @@ function Clinicas() {
       await recusarClinica({ data: { clinic_id: id } });
       toast.success("Cadastro recusado");
       queryClient.invalidateQueries({ queryKey: ["clinicas"] });
-    } catch {
+    } catch (err) {
+      console.error(err);
       toast.error("Não foi possível recusar o cadastro.");
     }
   };
@@ -137,6 +143,7 @@ function Clinicas() {
       setSenhaAcesso("");
       setAcessoPara(null);
     } catch (err) {
+      console.error(err);
       toast.error("Não foi possível criar o acesso", {
         description: err instanceof Error ? err.message : undefined,
       });

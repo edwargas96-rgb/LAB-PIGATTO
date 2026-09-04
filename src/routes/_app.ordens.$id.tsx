@@ -71,7 +71,10 @@ function DetalheOrdem() {
         .select("*, clinics(nome, responsavel, telefone)")
         .eq("id", id)
         .maybeSingle();
-      if (error) throw error;
+      if (error) {
+        console.error(error);
+        throw error;
+      }
       return data;
     },
   });
@@ -84,7 +87,10 @@ function DetalheOrdem() {
         .select("*")
         .eq("order_id", id)
         .order("created_at");
-      if (error) throw error;
+      if (error) {
+        console.error(error);
+        throw error;
+      }
       return data ?? [];
     },
   });
@@ -97,7 +103,10 @@ function DetalheOrdem() {
         .select("*")
         .eq("order_id", id)
         .order("created_at", { ascending: false });
-      if (error) throw error;
+      if (error) {
+        console.error(error);
+        throw error;
+      }
       return data ?? [];
     },
   });
@@ -116,7 +125,8 @@ function DetalheOrdem() {
         .createSignedUrl(arquivo.storage_path, 60, { download: arquivo.nome_arquivo });
       if (error || !data) throw error;
       window.open(data.signedUrl, "_blank", "noopener,noreferrer");
-    } catch {
+    } catch (err) {
+      console.error(err);
       toast.error("Não foi possível gerar o link do arquivo.");
     }
   };
@@ -148,6 +158,7 @@ function DetalheOrdem() {
     }
     setSalvando(false);
     if (error) {
+      console.error(error);
       toast.error("Não foi possível atualizar o status.");
       return;
     }
@@ -171,6 +182,7 @@ function DetalheOrdem() {
     });
     setEnviandoMensagem(false);
     if (error) {
+      console.error(error);
       toast.error("Não foi possível enviar a mensagem.");
       return;
     }
@@ -196,6 +208,7 @@ function DetalheOrdem() {
     }
     setSalvando(false);
     if (error) {
+      console.error(error);
       toast.error("Não foi possível confirmar o recebimento.");
       return;
     }

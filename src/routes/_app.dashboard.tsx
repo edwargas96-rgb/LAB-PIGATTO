@@ -49,7 +49,10 @@ function Dashboard() {
         )
         .is("deleted_at", null)
         .order("created_at", { ascending: false });
-      if (error) throw error;
+      if (error) {
+        console.error(error);
+        throw error;
+      }
       return (data ?? []) as unknown as OrdemLista[];
     },
   });
@@ -65,7 +68,10 @@ function Dashboard() {
         .not("comentario", "is", null)
         .order("created_at", { ascending: false })
         .limit(300);
-      if (error) throw error;
+      if (error) {
+        console.error(error);
+        throw error;
+      }
       const porOrdem = new Map<string, EventoComentario[]>();
       for (const ev of data ?? []) {
         const lista = porOrdem.get(ev.order_id) ?? [];

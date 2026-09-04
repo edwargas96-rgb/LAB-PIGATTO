@@ -58,6 +58,7 @@ function RedefinirSenha() {
     const { error } = await supabase.auth.updateUser({ password: senha });
     setSalvando(false);
     if (error) {
+      console.error(error);
       toast.error("Não foi possível salvar a nova senha", { description: error.message });
       return;
     }

@@ -49,7 +49,10 @@ function CatalogoCard({
     queryKey: ["catalogo-admin", tabela],
     queryFn: async () => {
       const { data, error } = await supabase.from(tabela).select("id, nome, ativo").order("nome");
-      if (error) throw error;
+      if (error) {
+        console.error(error);
+        throw error;
+      }
       return data ?? [];
     },
   });
@@ -64,6 +67,7 @@ function CatalogoCard({
     if (!novo.trim()) return;
     const { error } = await supabase.from(tabela).insert({ nome: novo.trim() });
     if (error) {
+      console.error(error);
       toast.error("Não foi possível adicionar o item.");
       return;
     }
@@ -74,6 +78,7 @@ function CatalogoCard({
   const alternar = async (id: string, ativo: boolean) => {
     const { error } = await supabase.from(tabela).update({ ativo: !ativo }).eq("id", id);
     if (error) {
+      console.error(error);
       toast.error("Não foi possível atualizar o item.");
       return;
     }
@@ -125,7 +130,8 @@ function LixeiraCard() {
       queryClient.invalidateQueries({ queryKey: ["gestao-ordens-lixeira"] });
       queryClient.invalidateQueries({ queryKey: ["gestao-ordens"] });
       queryClient.invalidateQueries({ queryKey: ["ordens"] });
-    } catch {
+    } catch (err) {
+      console.error(err);
       toast.error("Não foi possível restaurar a O.S.");
     }
   };

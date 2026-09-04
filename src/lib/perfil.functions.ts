@@ -22,6 +22,7 @@ export const criarColaboradorClinica = createServerFn({ method: "POST" })
       .maybeSingle();
 
     if (perfilError || !perfil?.clinic_id) {
+      if (perfilError) console.error(perfilError);
       throw new Error("Apenas uma conta de clínica pode adicionar colaboradores.");
     }
 
@@ -39,10 +40,11 @@ export const criarColaboradorClinica = createServerFn({ method: "POST" })
     });
 
     if (error || !criado.user) {
+      console.error(error);
       throw new Error(error?.message ?? "Não foi possível criar o acesso.");
     }
 
-    await supabaseAdmin.from("profiles").upsert(
+    const { error: profileError } = await supabaseAdmin.from("profiles").upsert(
       {
         id: criado.user.id,
         nome_completo: data.nome_completo,
@@ -51,6 +53,7 @@ export const criarColaboradorClinica = createServerFn({ method: "POST" })
       },
       { onConflict: "id" },
     );
+    if (profileError) console.error(profileError);
 
     return { ok: true, userId: criado.user.id };
   });

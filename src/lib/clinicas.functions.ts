@@ -18,7 +18,10 @@ export const criarAcessoClinica = createServerFn({ method: "POST" })
       .select("role")
       .eq("user_id", context.userId);
 
-    if (rolesError) throw new Error("Não foi possível validar suas permissões.");
+    if (rolesError) {
+      console.error(rolesError);
+      throw new Error("Não foi possível validar suas permissões.");
+    }
     if (!(roles ?? []).some((r) => r.role === "laboratorio")) {
       throw new Error("Apenas o laboratório pode criar acessos.");
     }
@@ -37,10 +40,11 @@ export const criarAcessoClinica = createServerFn({ method: "POST" })
     });
 
     if (error || !criado.user) {
+      console.error(error);
       throw new Error(error?.message ?? "Não foi possível criar o acesso.");
     }
 
-    await supabaseAdmin.from("profiles").upsert(
+    const { error: profileError } = await supabaseAdmin.from("profiles").upsert(
       {
         id: criado.user.id,
         nome_completo: data.nome_completo,
@@ -49,6 +53,7 @@ export const criarAcessoClinica = createServerFn({ method: "POST" })
       },
       { onConflict: "id" },
     );
+    if (profileError) console.error(profileError);
 
     return { ok: true, userId: criado.user.id };
   });
@@ -68,7 +73,10 @@ export const recusarClinica = createServerFn({ method: "POST" })
       .select("role")
       .eq("user_id", context.userId);
 
-    if (rolesError) throw new Error("Não foi possível validar suas permissões.");
+    if (rolesError) {
+      console.error(rolesError);
+      throw new Error("Não foi possível validar suas permissões.");
+    }
     if (!(roles ?? []).some((r) => r.role === "laboratorio")) {
       throw new Error("Apenas o laboratório pode recusar cadastros.");
     }

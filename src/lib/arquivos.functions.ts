@@ -10,7 +10,10 @@ import type { Database } from "@/integrations/supabase/types";
 // pode enviar/baixar arquivos desta ordem — clínica dona da ordem ou laboratório.
 async function verificarAcessoOrdem(supabase: SupabaseClient<Database>, orderId: string) {
   const { data, error } = await supabase.from("orders").select("id").eq("id", orderId).maybeSingle();
-  if (error || !data) throw new Error("Você não tem acesso a esta ordem.");
+  if (error || !data) {
+    if (error) console.error(error);
+    throw new Error("Você não tem acesso a esta ordem.");
+  }
 }
 
 const criarUploadSchema = z.object({
