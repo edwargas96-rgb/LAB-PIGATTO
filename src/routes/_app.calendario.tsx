@@ -48,7 +48,7 @@ function Calendario() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("orders")
-        .select("id, numero, paciente, status, data_entrega")
+        .select("id, numero, paciente, status, data_entrega, entregue_em")
         .is("deleted_at", null)
         .gte("data_entrega", inicio)
         .lte("data_entrega", fim)
@@ -170,7 +170,7 @@ function Calendario() {
                     {o.numero}
                   </span>
                   <span className="min-w-0 flex-1 truncate text-sm">{o.paciente}</span>
-                  <StatusBadge status={o.status} />
+                  <StatusBadge status={o.status} entregueEm={o.entregue_em} />
                 </Link>
               </li>
             ))}

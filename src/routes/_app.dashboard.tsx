@@ -31,6 +31,7 @@ type OrdemLista = {
   status: string;
   data_entrega: string;
   created_at: string;
+  entregue_em: string | null;
   clinics: { nome: string } | null;
 };
 
@@ -43,7 +44,9 @@ function Dashboard() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("orders")
-        .select("id, numero, paciente, item, status, data_entrega, created_at, clinics(nome)")
+        .select(
+          "id, numero, paciente, item, status, data_entrega, created_at, entregue_em, clinics(nome)",
+        )
         .is("deleted_at", null)
         .order("created_at", { ascending: false });
       if (error) throw error;
@@ -73,12 +76,14 @@ function Dashboard() {
     },
   });
 
-  const novas = ordens.filter((o) => o.status === "Recebida").length;
+  const novas = ordens.filter((o) => o.status === "Recebida" && !o.entregue_em).length;
   const producao = ordens.filter((o) =>
     ["Em análise", "Em produção", "Em prova"].includes(o.status),
   ).length;
   const prontas = ordens.filter((o) => o.status === "Pronta").length;
-  const atrasadas = ordens.filter((o) => prazoTipo(o.data_entrega, o.status) === "atrasada").length;
+  const atrasadas = ordens.filter(
+    (o) => prazoTipo(o.data_entrega, o.status, o.entregue_em) === "atrasada",
+  ).length;
 
   const cards = [
     { label: "Novas", valor: novas, icone: Inbox, cor: "text-primary" },
@@ -135,7 +140,7 @@ function Dashboard() {
         ) : (
           <ul className="divide-y divide-border">
             {ordens.map((o) => {
-              const tipo = prazoTipo(o.data_entrega, o.status);
+              const tipo = prazoTipo(o.data_entrega, o.status, o.entregue_em);
               const d = diasRestantes(o.data_entrega);
               const texto =
                 tipo === "concluida"
@@ -182,7 +187,7 @@ function Dashboard() {
                         </span>
                       )}
                       <PrazoBadge tipo={tipo} texto={texto} />
-                      <StatusBadge status={o.status} />
+                      <StatusBadge status={o.status} entregueEm={o.entregue_em} />
                     </div>
                   </Link>
                 </li>
