@@ -99,7 +99,7 @@ function Login() {
           src="/login-art.jpg"
           alt=""
           aria-hidden="true"
-          className="absolute inset-0 h-full w-full object-cover object-[70%_center]"
+          className="absolute inset-0 top-0 h-auto w-full object-contain object-top"
           style={{
             maskImage:
               "linear-gradient(to bottom, #000 0%, #000 62%, rgba(0,0,0,0.35) 82%, rgba(0,0,0,0) 96%)",
