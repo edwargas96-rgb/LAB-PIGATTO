@@ -50,7 +50,7 @@ function Expedicao() {
   }, [loading, role, navigate]);
 
   const { data: ordens = [] } = useOrdens();
-  const aEntregar = ordens.filter((o) => o.lab_status === "Recebida");
+  const aEntregar = ordens.filter((o) => o.lab_status === "Recebida" && !o.entregue_em);
   const entregues = ordens.filter((o) => o.lab_status === "Entregue");
 
   return (

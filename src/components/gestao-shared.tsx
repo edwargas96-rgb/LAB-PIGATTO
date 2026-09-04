@@ -1,6 +1,7 @@
 // Peças compartilhadas entre as telas de gestão do laboratório
 // (Ordens, Visão geral, etc.), expostas na barra lateral.
 import { useQuery } from "@tanstack/react-query";
+import { Check } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import { diasRestantes } from "@/lib/ordens";
@@ -77,15 +78,28 @@ export async function restaurarDaLixeira(id: string) {
   if (error) throw error;
 }
 
-export function StatusSelo({ status }: { status: LabStatus }) {
+export function StatusSelo({
+  status,
+  entregueEm,
+}: {
+  status: LabStatus;
+  // Quando a clínica confirma o recebimento, lab_status volta para
+  // "Recebida" (mesmo valor da entrada da ordem). entregueEm (preenchido
+  // na entrega e nunca mais limpo) distingue esse caso de uma ordem nova.
+  entregueEm?: string | null;
+}) {
+  const confirmadaPelaClinica = status === "Recebida" && !!entregueEm;
   return (
     <span
       className={cn(
-        "numeric inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium",
-        LAB_STATUS_STYLE[status],
+        "numeric inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-medium",
+        confirmadaPelaClinica
+          ? "bg-emerald-100 text-emerald-800 border-emerald-200"
+          : LAB_STATUS_STYLE[status],
       )}
     >
-      {status}
+      {confirmadaPelaClinica && <Check className="size-3" />}
+      {confirmadaPelaClinica ? "Recebida (confirmada)" : status}
     </span>
   );
 }
