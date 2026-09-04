@@ -18,12 +18,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { formatarData, formatarDataHora, diasRestantes } from "@/lib/ordens";
 import {
@@ -262,6 +256,7 @@ function DetalheOS({ os, onClose, onChange }: { os: OS; onClose: () => void; onC
   const qc = useQueryClient();
   const [resposta, setResposta] = useState(os.resposta_laboratorio ?? "");
   const [salvando, setSalvando] = useState(false);
+  const [menuEntregarAberto, setMenuEntregarAberto] = useState(false);
 
   const { data: eventos = [] } = useQuery({
     queryKey: ["os-eventos", os.id],
@@ -342,25 +337,46 @@ function DetalheOS({ os, onClose, onChange }: { os: OS; onClose: () => void; onC
   };
 
   const entregar = async (imprimir: boolean) => {
+    setMenuEntregarAberto(false);
     if (imprimir) imprimirFicha();
     await mudarStatus("Entregue", "Entregue ao dentista");
   };
 
+  // Menu feito na mão (em vez do DropdownMenu do Radix): dentro de um Dialog,
+  // o portal do dropdown fica preso pela armadilha de foco do proprio modal
+  // e nunca aparece na tela.
   const acao =
     os.lab_status === "Recebida" && !os.entregue_em ? (
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button size="sm" disabled={salvando}>
-            Marcar como entregue <ChevronDown className="size-4" />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuItem onClick={() => entregar(false)}>Entregar sem imprimir</DropdownMenuItem>
-          <DropdownMenuItem onClick={() => entregar(true)}>
-            <Printer className="size-4" /> Entregar e imprimir
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+      <div className="relative">
+        <Button size="sm" disabled={salvando} onClick={() => setMenuEntregarAberto((v) => !v)}>
+          Marcar como entregue <ChevronDown className="size-4" />
+        </Button>
+        {menuEntregarAberto && (
+          <>
+            <div
+              className="fixed inset-0 z-10"
+              onClick={() => setMenuEntregarAberto(false)}
+              aria-hidden="true"
+            />
+            <div className="absolute right-0 z-20 mt-1 w-56 overflow-hidden rounded-md border border-border bg-popover text-popover-foreground shadow-md">
+              <button
+                type="button"
+                onClick={() => entregar(false)}
+                className="flex w-full items-center px-3 py-2 text-left text-sm hover:bg-accent"
+              >
+                Entregar sem imprimir
+              </button>
+              <button
+                type="button"
+                onClick={() => entregar(true)}
+                className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-accent"
+              >
+                <Printer className="size-4" /> Entregar e imprimir
+              </button>
+            </div>
+          </>
+        )}
+      </div>
     ) : null;
 
   return (
