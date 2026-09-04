@@ -9,6 +9,7 @@ import { criarColaboradorClinica } from "@/lib/perfil.functions";
 import { AppLayout } from "@/components/AppLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Label } from "@/components/ui/label";
 import {
   Dialog,
@@ -120,9 +121,8 @@ function AlterarSenhaCard({ email }: { email: string | null }) {
       <form onSubmit={alterarSenha} className="space-y-4">
         <div className="space-y-1.5">
           <Label htmlFor="senha-atual">Senha atual</Label>
-          <Input
+          <PasswordInput
             id="senha-atual"
-            type="password"
             required
             autoComplete="current-password"
             value={senhaAtual}
@@ -132,9 +132,8 @@ function AlterarSenhaCard({ email }: { email: string | null }) {
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-1.5">
             <Label htmlFor="nova-senha">Nova senha</Label>
-            <Input
+            <PasswordInput
               id="nova-senha"
-              type="password"
               required
               autoComplete="new-password"
               value={novaSenha}
@@ -143,9 +142,8 @@ function AlterarSenhaCard({ email }: { email: string | null }) {
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="confirmar-senha">Confirmar nova senha</Label>
-            <Input
+            <PasswordInput
               id="confirmar-senha"
-              type="password"
               required
               autoComplete="new-password"
               value={confirmarSenha}

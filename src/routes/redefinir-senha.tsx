@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Label } from "@/components/ui/label";
 
 export const Route = createFileRoute("/redefinir-senha")({
@@ -113,9 +113,8 @@ function RedefinirSenha() {
             <form onSubmit={salvar} className="mt-8 space-y-4">
               <div className="space-y-1.5">
                 <Label htmlFor="senha">Nova senha</Label>
-                <Input
+                <PasswordInput
                   id="senha"
-                  type="password"
                   required
                   autoComplete="new-password"
                   value={senha}
@@ -125,9 +124,8 @@ function RedefinirSenha() {
               </div>
               <div className="space-y-1.5">
                 <Label htmlFor="confirmar">Confirmar nova senha</Label>
-                <Input
+                <PasswordInput
                   id="confirmar"
-                  type="password"
                   required
                   autoComplete="new-password"
                   value={confirmar}

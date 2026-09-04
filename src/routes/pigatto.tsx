@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Label } from "@/components/ui/label";
 
 export const Route = createFileRoute("/pigatto")({
@@ -127,9 +128,8 @@ function LoginPigatto() {
                   Esqueci minha senha
                 </Link>
               </div>
-              <Input
+              <PasswordInput
                 id="senha"
-                type="password"
                 required
                 autoComplete="current-password"
                 value={senha}
