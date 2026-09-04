@@ -239,7 +239,7 @@ function DetalheOrdem() {
     <AppLayout
       titulo={`Ordem ${ordem.numero}`}
       descricao={`${ordem.paciente}${clinica?.nome ? ` · ${clinica.nome}` : ""}`}
-      acao={<StatusBadge status={ordem.status} />}
+      acao={<StatusBadge status={ordem.status} entregueEm={ordem.entregue_em} />}
     >
       <div className="mb-4">
         <Link

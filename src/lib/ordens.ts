@@ -40,8 +40,11 @@ export function diasRestantes(dataEntrega: string) {
 }
 
 /** 'atrasada' | 'proxima' | 'ok' | 'concluida' */
-export function prazoTipo(dataEntrega: string, status: string) {
-  if (status === "Enviada/Entregue") return "concluida" as const;
+export function prazoTipo(dataEntrega: string, status: string, entregueEm?: string | null) {
+  // "Enviada/Entregue" cobre a entrega do laboratório; entregueEm cobre o
+  // caso em que a clínica já confirmou o recebimento (status volta a
+  // "Recebida", reaproveitando o mesmo valor da entrada da ordem).
+  if (status === "Enviada/Entregue" || entregueEm) return "concluida" as const;
   const d = diasRestantes(dataEntrega);
   if (d < 0) return "atrasada" as const;
   if (d <= 2) return "proxima" as const;
