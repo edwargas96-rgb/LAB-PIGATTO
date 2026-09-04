@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { Camera, ChevronDown, Clock, Eye, EyeOff, Upload } from "lucide-react";
+import { ChevronDown, Eye, EyeOff } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { cadastrarClinicaPublico } from "@/lib/cadastro.functions";
@@ -18,14 +18,6 @@ const WHATSAPP_MENSAGEM =
   "para enviar meus trabalhos digitais.";
 
 const WHATSAPP = `https://wa.me/${WHATSAPP_NUMERO}?text=${encodeURIComponent(WHATSAPP_MENSAGEM)}`;
-
-const ETAPAS = ["Recebida", "Em análise", "Em produção", "Em prova", "Pronta", "Entregue"];
-
-const DESTAQUES = [
-  { icone: Upload, texto: "Envie arquivos e fotos do caso" },
-  { icone: Camera, texto: "Marque os elementos no odontograma" },
-  { icone: Clock, texto: "Acompanhe cada etapa em tempo real" },
-];
 
 export const Route = createFileRoute("/login")({
   ssr: false,
@@ -101,7 +93,7 @@ function Login() {
           rola suavemente até o formulário de login. */}
       <div
         ref={heroRef}
-        className="relative flex h-[100svh] flex-col justify-between overflow-hidden bg-background p-6 pt-10 pb-6 lg:hidden"
+        className="relative flex h-[100svh] flex-col justify-end overflow-hidden bg-background p-6 pt-10 pb-6 lg:hidden"
       >
         <img
           src="/login-art.jpg"
@@ -123,35 +115,7 @@ function Login() {
           }}
         />
 
-        <div className="relative flex flex-col items-center gap-2">
-          <img src="/logo-symbol.png" alt="" aria-hidden="true" className="h-7 w-auto" />
-          <span className="text-[11px] font-medium tracking-[0.3em] text-white/70 uppercase">
-            Portal do dentista
-          </span>
-        </div>
-
-        <div className="relative">
-          <ul className="mt-6 space-y-3">
-            {DESTAQUES.map(({ icone: Icone, texto }) => (
-              <li key={texto} className="flex items-center gap-3 text-sm text-white/80">
-                <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-white/10 ring-1 ring-white/15">
-                  <Icone className="size-4 text-white/90" />
-                </span>
-                {texto}
-              </li>
-            ))}
-          </ul>
-        </div>
-
         <div className="relative flex w-full min-w-0 flex-col items-center gap-4">
-          <div className="flex w-full min-w-0 flex-wrap items-center justify-center gap-x-2 gap-y-1 text-[10px] tracking-wide text-white/45">
-            {ETAPAS.map((etapa, i) => (
-              <span key={etapa} className="flex items-center gap-2 whitespace-nowrap">
-                {i > 0 && <span aria-hidden="true">→</span>}
-                {etapa}
-              </span>
-            ))}
-          </div>
           {/* Desce até o login; gira 180° para apontar pra cima assim que a
               abertura sai de vista, servindo de atalho pra voltar ao topo. */}
           <button
@@ -192,36 +156,6 @@ function Login() {
           }}
         />
 
-        <div className="relative flex h-full flex-col justify-between p-12 xl:p-14">
-          <div className="flex items-center gap-2.5">
-            <img src="/logo-symbol.png" alt="" aria-hidden="true" className="h-6 w-auto" />
-            <span className="text-[11px] font-medium tracking-[0.22em] text-white/55 uppercase">
-              Portal do dentista
-            </span>
-          </div>
-
-          <div className="max-w-[24rem] xl:max-w-[26rem]">
-            <ul className="mt-8 space-y-3.5">
-              {DESTAQUES.map(({ icone: Icone, texto }) => (
-                <li key={texto} className="flex items-center gap-3.5 text-sm text-white/75">
-                  <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-white/10 ring-1 ring-white/15">
-                    <Icone className="size-4 text-white/90" />
-                  </span>
-                  {texto}
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="flex items-center gap-x-2 text-[10px] tracking-wide text-white/45">
-            {ETAPAS.map((etapa, i) => (
-              <span key={etapa} className="flex items-center gap-2 whitespace-nowrap">
-                {i > 0 && <span aria-hidden="true">→</span>}
-                {etapa}
-              </span>
-            ))}
-          </div>
-        </div>
       </div>
 
       {/* Painel da direita: logo em destaque + formulário. */}
