@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
-import { Search, Plus, Printer, Loader2, MessageSquare, Trash2 } from "lucide-react";
+import { Search, Plus, Printer, Loader2, MessageSquare, Trash2, ChevronDown } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
@@ -18,6 +18,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { formatarData, formatarDataHora, diasRestantes } from "@/lib/ordens";
 import {
@@ -335,15 +341,26 @@ function DetalheOS({ os, onClose, onChange }: { os: OS; onClose: () => void; onC
     w.print();
   };
 
+  const entregar = async (imprimir: boolean) => {
+    if (imprimir) imprimirFicha();
+    await mudarStatus("Entregue", "Entregue ao dentista");
+  };
+
   const acao =
     os.lab_status === "Recebida" && !os.entregue_em ? (
-      <Button
-        size="sm"
-        disabled={salvando}
-        onClick={() => mudarStatus("Entregue", "Entregue ao dentista")}
-      >
-        Marcar como entregue
-      </Button>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button size="sm" disabled={salvando}>
+            Marcar como entregue <ChevronDown className="size-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem onClick={() => entregar(false)}>Entregar sem imprimir</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => entregar(true)}>
+            <Printer className="size-4" /> Entregar e imprimir
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     ) : null;
 
   return (
