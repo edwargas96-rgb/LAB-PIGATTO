@@ -50,6 +50,7 @@ function LoginPigatto() {
     });
 
     if (error || !data.user) {
+      if (error) console.error(error);
       setEnviando(false);
       toast.error("Não foi possível entrar", { description: "Verifique o e-mail e a senha." });
       return;

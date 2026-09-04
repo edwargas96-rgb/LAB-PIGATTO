@@ -79,6 +79,7 @@ function Login() {
     });
     setEnviando(false);
     if (error) {
+      console.error(error);
       toast.error("Não foi possível entrar", { description: "Verifique o e-mail e a senha." });
       return;
     }
@@ -309,6 +310,7 @@ function CadastroClinicaForm({ onCadastrado }: { onCadastrado: () => void }) {
       });
       setEnviado(true);
     } catch (err) {
+      console.error(err);
       toast.error("Não foi possível cadastrar", {
         description: err instanceof Error ? err.message : undefined,
       });

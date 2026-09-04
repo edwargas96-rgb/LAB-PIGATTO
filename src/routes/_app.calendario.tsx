@@ -53,7 +53,10 @@ function Calendario() {
         .gte("data_entrega", inicio)
         .lte("data_entrega", fim)
         .order("data_entrega");
-      if (error) throw error;
+      if (error) {
+        console.error(error);
+        throw error;
+      }
       return data ?? [];
     },
   });

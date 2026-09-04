@@ -30,6 +30,7 @@ export const cadastrarClinicaPublico = createServerFn({ method: "POST" })
       .single();
 
     if (clinicaError || !clinica) {
+      console.error(clinicaError);
       throw new Error("Não foi possível cadastrar a clínica.");
     }
 
@@ -45,6 +46,7 @@ export const cadastrarClinicaPublico = createServerFn({ method: "POST" })
     });
 
     if (userError || !criado.user) {
+      console.error(userError);
       // Sem usuário não tem como acessar a clínica criada — desfaz.
       await supabaseAdmin.from("clinics").delete().eq("id", clinica.id);
       throw new Error(
@@ -54,7 +56,7 @@ export const cadastrarClinicaPublico = createServerFn({ method: "POST" })
       );
     }
 
-    await supabaseAdmin.from("profiles").upsert(
+    const { error: profileError } = await supabaseAdmin.from("profiles").upsert(
       {
         id: criado.user.id,
         nome_completo: data.responsavel,
@@ -63,6 +65,7 @@ export const cadastrarClinicaPublico = createServerFn({ method: "POST" })
       },
       { onConflict: "id" },
     );
+    if (profileError) console.error(profileError);
 
     return { ok: true };
   });

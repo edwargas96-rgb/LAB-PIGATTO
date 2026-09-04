@@ -57,7 +57,10 @@ function useCatalogo(tabela: "item_types" | "materials" | "implant_systems" | "s
         .select("id, nome, ativo")
         .eq("ativo", true)
         .order("nome");
-      if (error) throw error;
+      if (error) {
+        console.error(error);
+        throw error;
+      }
       return data ?? [];
     },
   });
@@ -91,7 +94,10 @@ function NovaOrdem() {
         .select("id, nome")
         .eq("ativo", true)
         .order("nome");
-      if (error) throw error;
+      if (error) {
+        console.error(error);
+        throw error;
+      }
       return data ?? [];
     },
   });
@@ -198,6 +204,7 @@ function NovaOrdem() {
       toast.success(`Ordem ${ordem.numero} enviada`);
       navigate({ to: "/ordens/$id", params: { id: ordem.id } });
     } catch (err) {
+      console.error(err);
       toast.error("Não foi possível enviar a ordem", {
         description: err instanceof Error ? err.message : undefined,
       });

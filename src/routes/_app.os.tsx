@@ -99,7 +99,7 @@ function OrdensPage() {
       const prox = proximoStatus(o.lab_status);
       if (!prox) continue;
       if (imprimir) imprimirFicha(o);
-      await supabase
+      const { error } = await supabase
         .from("orders")
         .update({
           lab_status: prox,
@@ -107,6 +107,11 @@ function OrdensPage() {
           entregue_em: new Date().toISOString(),
         })
         .eq("id", o.id);
+      if (error) {
+        console.error(error);
+        toast.error(`Não foi possível marcar a O.S. ${o.numero} como entregue.`);
+        continue;
+      }
       await registrarEvento(o.id, prox, "Marcada como entregue em lote");
     }
     toast.success("Marcadas como entregue");
@@ -124,7 +129,8 @@ function OrdensPage() {
       toast.success("Enviada(s) para a lixeira");
       setSel(new Set());
       invalidate();
-    } catch {
+    } catch (err) {
+      console.error(err);
       toast.error("Não foi possível enviar para a lixeira.");
     }
   };
@@ -330,9 +336,14 @@ function DetalheOS({ os, onClose, onChange }: { os: OS; onClose: () => void; onC
       status: LAB_TO_ORDER_STATUS[novo],
     };
     if (novo === "Entregue") patch.entregue_em = new Date().toISOString();
-    await supabase.from("orders").update(patch).eq("id", os.id);
-    await registrarEvento(os.id, novo, comentario);
+    const { error } = await supabase.from("orders").update(patch).eq("id", os.id);
     setSalvando(false);
+    if (error) {
+      console.error(error);
+      toast.error("Não foi possível atualizar o status.");
+      return;
+    }
+    await registrarEvento(os.id, novo, comentario);
     qc.invalidateQueries({ queryKey: ["os-eventos", os.id] });
     onChange();
     toast.success(`O.S. ${novo}`);
@@ -341,24 +352,41 @@ function DetalheOS({ os, onClose, onChange }: { os: OS; onClose: () => void; onC
 
   const salvarProducao = async () => {
     setSalvando(true);
-    await supabase
+    const { error } = await supabase
       .from("orders")
       .update({ resposta_laboratorio: resposta.trim() || null })
       .eq("id", os.id);
     setSalvando(false);
+    if (error) {
+      console.error(error);
+      toast.error("Não foi possível salvar a observação.");
+      return;
+    }
     onChange();
     toast.success("Observação salva");
   };
 
   const toggleEtapa = async (id: string, concluida: boolean) => {
-    await supabase.from("order_steps").update({ concluida: !concluida }).eq("id", id);
+    const { error } = await supabase.from("order_steps").update({ concluida: !concluida }).eq("id", id);
+    if (error) {
+      console.error(error);
+      toast.error("Não foi possível atualizar a etapa.");
+      return;
+    }
     qc.invalidateQueries({ queryKey: ["os-etapas", os.id] });
   };
 
   const addEtapa = async () => {
     const nome = window.prompt("Nome da etapa (ex.: Enceramento, Prova, Acabamento)");
     if (!nome) return;
-    await supabase.from("order_steps").insert({ order_id: os.id, nome, ordem: etapas.length });
+    const { error } = await supabase
+      .from("order_steps")
+      .insert({ order_id: os.id, nome, ordem: etapas.length });
+    if (error) {
+      console.error(error);
+      toast.error("Não foi possível adicionar a etapa.");
+      return;
+    }
     qc.invalidateQueries({ queryKey: ["os-etapas", os.id] });
   };
 
@@ -587,6 +615,7 @@ function NovaOS({ onClose, onSaved }: { onClose: () => void; onSaved: () => void
       .select("id")
       .single();
     if (error || !data) {
+      console.error(error);
       setSalvando(false);
       toast.error("Não foi possível criar a O.S.", { description: error?.message });
       return;

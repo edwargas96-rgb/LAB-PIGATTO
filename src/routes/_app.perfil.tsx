@@ -104,6 +104,7 @@ function AlterarSenhaCard({ email }: { email: string | null }) {
     const { error } = await supabase.auth.updateUser({ password: novaSenha });
     setSalvando(false);
     if (error) {
+      console.error(error);
       toast.error("Não foi possível trocar a senha.", { description: error.message });
       return;
     }
@@ -176,7 +177,10 @@ function ColaboradoresCard({ clinicId, userId }: { clinicId: string; userId: str
         .select("id, nome_completo, email")
         .eq("clinic_id", clinicId)
         .order("nome_completo");
-      if (error) throw error;
+      if (error) {
+        console.error(error);
+        throw error;
+      }
       return data ?? [];
     },
   });
@@ -197,6 +201,7 @@ function ColaboradoresCard({ clinicId, userId }: { clinicId: string; userId: str
       setAberto(false);
       queryClient.invalidateQueries({ queryKey: ["colaboradores-clinica", clinicId] });
     } catch (err) {
+      console.error(err);
       toast.error("Não foi possível adicionar o colaborador", {
         description: err instanceof Error ? err.message : undefined,
       });

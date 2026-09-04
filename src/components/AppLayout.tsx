@@ -72,7 +72,10 @@ export function AppLayout({
         .from("clinics")
         .select("id", { count: "exact", head: true })
         .eq("ativo", false);
-      if (error) throw error;
+      if (error) {
+        console.error(error);
+        throw error;
+      }
       return count ?? 0;
     },
     enabled: isLab,

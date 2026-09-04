@@ -41,7 +41,10 @@ export function useOrdens() {
         .select(COLUNAS_OS)
         .is("deleted_at", null)
         .order("created_at", { ascending: false });
-      if (error) throw error;
+      if (error) {
+        console.error(error);
+        throw error;
+      }
       return (data ?? []) as unknown as OS[];
     },
   });
@@ -59,7 +62,10 @@ export function useOrdensLixeira() {
         .select(COLUNAS_OS)
         .not("deleted_at", "is", null)
         .order("deleted_at", { ascending: false });
-      if (error) throw error;
+      if (error) {
+        console.error(error);
+        throw error;
+      }
       return (data ?? []) as unknown as OS[];
     },
   });
@@ -70,12 +76,18 @@ export async function enviarParaLixeira(ids: string[]) {
     .from("orders")
     .update({ deleted_at: new Date().toISOString() })
     .in("id", ids);
-  if (error) throw error;
+  if (error) {
+    console.error(error);
+    throw error;
+  }
 }
 
 export async function restaurarDaLixeira(id: string) {
   const { error } = await supabase.from("orders").update({ deleted_at: null }).eq("id", id);
-  if (error) throw error;
+  if (error) {
+    console.error(error);
+    throw error;
+  }
 }
 
 export function StatusSelo({
@@ -124,10 +136,11 @@ export function prazoChip(o: OS): { texto: string; cls: string } {
 }
 
 export async function registrarEvento(orderId: string, status: string | null, comentario: string) {
-  await supabase.from("order_events").insert({
+  const { error } = await supabase.from("order_events").insert({
     order_id: orderId,
     status: status as never,
     comentario,
     autor: "Laboratório",
   });
+  if (error) console.error(error);
 }
