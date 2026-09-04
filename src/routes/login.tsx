@@ -96,7 +96,7 @@ function Login() {
         className="relative flex h-[100svh] flex-col justify-end overflow-hidden bg-background p-6 pt-10 pb-6 lg:hidden"
       >
         <img
-          src="/login-art.jpg"
+          src="/login-art-mobile.jpg"
           alt=""
           aria-hidden="true"
           className="absolute inset-0 top-0 h-auto w-full object-contain object-top"
