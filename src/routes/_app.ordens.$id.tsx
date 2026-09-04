@@ -125,9 +125,11 @@ function DetalheOrdem() {
       return;
     }
     setSalvando(true);
+    const patch: Record<string, unknown> = { status: novoStatus };
+    if (novoStatus === "Enviada/Entregue") patch["entregue_em"] = new Date().toISOString();
     const { error } = await supabase
       .from("orders")
-      .update({ status: novoStatus as never })
+      .update(patch as never)
       .eq("id", id);
     if (!error) {
       await supabase.from("order_events").insert({
