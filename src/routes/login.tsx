@@ -131,12 +131,6 @@ function Login() {
         </div>
 
         <div className="relative">
-          <h1 className="font-display text-[1.7rem] leading-[1.2] font-bold text-white">
-            Ordens de serviço com precisão clínica, do consultório à bancada.
-          </h1>
-
-          <div className="mt-6 h-px w-14 bg-white/25" />
-
           <ul className="mt-6 space-y-3">
             {DESTAQUES.map(({ icone: Icone, texto }) => (
               <li key={texto} className="flex items-center gap-3 text-sm text-white/80">
@@ -207,12 +201,6 @@ function Login() {
           </div>
 
           <div className="max-w-[24rem] xl:max-w-[26rem]">
-            <h2 className="font-display text-[2rem] leading-[1.15] font-bold text-white xl:text-[2.3rem]">
-              Ordens de serviço com precisão clínica, do consultório à bancada.
-            </h2>
-
-            <div className="mt-8 h-px w-14 bg-white/25" />
-
             <ul className="mt-8 space-y-3.5">
               {DESTAQUES.map(({ icone: Icone, texto }) => (
                 <li key={texto} className="flex items-center gap-3.5 text-sm text-white/75">
