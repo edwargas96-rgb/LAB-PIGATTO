@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { ArrowLeft, Download, FileText, MessageSquare } from "lucide-react";
+import { ArrowLeft, ChevronDown, Download, FileText, MessageSquare, Printer } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { criarDownloadWasabi } from "@/lib/arquivos.functions";
@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/select";
 import { STATUS_LIST, formatarData, formatarDataHora, formatarTamanho } from "@/lib/ordens";
 import { marcarOrdemVisitada } from "@/lib/mensagens";
+import { imprimirFicha } from "@/lib/ficha";
 
 export const Route = createFileRoute("/_app/ordens/$id")({
   head: () => ({
@@ -52,6 +53,7 @@ function DetalheOrdem() {
   const [novoStatus, setNovoStatus] = useState("");
   const [comentario, setComentario] = useState("");
   const [salvando, setSalvando] = useState(false);
+  const [menuEntregarAberto, setMenuEntregarAberto] = useState(false);
   const [mensagemClinica, setMensagemClinica] = useState("");
   const [enviandoMensagem, setEnviandoMensagem] = useState(false);
 
@@ -119,14 +121,19 @@ function DetalheOrdem() {
     }
   };
 
-  const atualizarStatus = async () => {
+  const atualizarStatus = async (imprimir = false) => {
+    setMenuEntregarAberto(false);
     if (!novoStatus) {
       toast.error("Selecione o novo status.");
       return;
     }
+    if (imprimir && ordem) imprimirFicha(ordem);
     setSalvando(true);
     const patch: Record<string, unknown> = { status: novoStatus };
-    if (novoStatus === "Enviada/Entregue") patch["entregue_em"] = new Date().toISOString();
+    if (novoStatus === "Enviada/Entregue") {
+      patch["entregue_em"] = new Date().toISOString();
+      patch["lab_status"] = "Entregue";
+    }
     const { error } = await supabase
       .from("orders")
       .update(patch as never)
@@ -439,9 +446,47 @@ function DetalheOrdem() {
                     placeholder="Opcional"
                   />
                 </div>
-                <Button onClick={atualizarStatus} disabled={salvando} className="w-full">
-                  {salvando ? "Salvando…" : "Salvar atualização"}
-                </Button>
+                {novoStatus === "Enviada/Entregue" ? (
+                  <div className="relative">
+                    <Button
+                      disabled={salvando}
+                      className="w-full"
+                      onClick={() => setMenuEntregarAberto((v) => !v)}
+                    >
+                      {salvando ? "Salvando…" : "Salvar atualização"}
+                      <ChevronDown className="size-4" />
+                    </Button>
+                    {menuEntregarAberto && (
+                      <>
+                        <div
+                          className="fixed inset-0 z-10"
+                          onClick={() => setMenuEntregarAberto(false)}
+                          aria-hidden="true"
+                        />
+                        <div className="absolute right-0 z-20 mt-1 w-56 overflow-hidden rounded-md border border-border bg-popover text-popover-foreground shadow-md">
+                          <button
+                            type="button"
+                            onClick={() => atualizarStatus(false)}
+                            className="flex w-full items-center px-3 py-2 text-left text-sm hover:bg-accent"
+                          >
+                            Entregar sem imprimir
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => atualizarStatus(true)}
+                            className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-accent"
+                          >
+                            <Printer className="size-4" /> Entregar e imprimir
+                          </button>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                ) : (
+                  <Button onClick={() => atualizarStatus(false)} disabled={salvando} className="w-full">
+                    {salvando ? "Salvando…" : "Salvar atualização"}
+                  </Button>
+                )}
               </div>
             </section>
           )}
