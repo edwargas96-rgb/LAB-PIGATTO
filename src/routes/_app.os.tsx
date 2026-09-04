@@ -62,6 +62,7 @@ function OrdensPage() {
   const [sel, setSel] = useState<Set<string>>(new Set());
   const [abrir, setAbrir] = useState<OS | null>(null);
   const [novaAberta, setNovaAberta] = useState(false);
+  const [menuLoteAberto, setMenuLoteAberto] = useState(false);
 
   const invalidate = () => qc.invalidateQueries({ queryKey: ["gestao-ordens"] });
 
@@ -90,11 +91,13 @@ function OrdensPage() {
       return n;
     });
 
-  const avancarLote = async () => {
+  const avancarLote = async (imprimir: boolean) => {
+    setMenuLoteAberto(false);
     const alvos = ordens.filter((o) => sel.has(o.id));
     for (const o of alvos) {
       const prox = proximoStatus(o.lab_status);
       if (!prox) continue;
+      if (imprimir) imprimirFicha(o);
       await supabase
         .from("orders")
         .update({
@@ -173,9 +176,40 @@ function OrdensPage() {
         {sel.size > 0 && (
           <div className="flex flex-wrap items-center gap-3 rounded-xl border border-primary/30 bg-primary-soft/40 px-4 py-3">
             <span className="numeric text-sm font-medium">{sel.size} selecionada(s)</span>
-            <Button size="sm" variant="secondary" onClick={avancarLote}>
-              Marcar como entregue
-            </Button>
+            <div className="relative">
+              <Button
+                size="sm"
+                variant="secondary"
+                onClick={() => setMenuLoteAberto((v) => !v)}
+              >
+                Marcar como entregue <ChevronDown className="size-4" />
+              </Button>
+              {menuLoteAberto && (
+                <>
+                  <div
+                    className="fixed inset-0 z-10"
+                    onClick={() => setMenuLoteAberto(false)}
+                    aria-hidden="true"
+                  />
+                  <div className="absolute left-0 z-20 mt-1 w-56 overflow-hidden rounded-md border border-border bg-popover text-popover-foreground shadow-md">
+                    <button
+                      type="button"
+                      onClick={() => avancarLote(false)}
+                      className="flex w-full items-center px-3 py-2 text-left text-sm hover:bg-accent"
+                    >
+                      Entregar sem imprimir
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => avancarLote(true)}
+                      className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-accent"
+                    >
+                      <Printer className="size-4" /> Entregar e imprimir
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
             <span className="ml-auto flex items-center gap-3">
               <Button size="sm" variant="outline" onClick={enviarSelecaoParaLixeira}>
                 <Trash2 className="size-4" /> Enviar para lixeira
@@ -327,18 +361,9 @@ function DetalheOS({ os, onClose, onChange }: { os: OS; onClose: () => void; onC
     qc.invalidateQueries({ queryKey: ["os-etapas", os.id] });
   };
 
-  const imprimirFicha = () => {
-    const w = window.open("", "_blank", "width=780,height=900");
-    if (!w) return;
-    w.document.write(fichaHtml(os));
-    w.document.close();
-    w.focus();
-    w.print();
-  };
-
   const entregar = async (imprimir: boolean) => {
     setMenuEntregarAberto(false);
-    if (imprimir) imprimirFicha();
+    if (imprimir) imprimirFicha(os);
     await mudarStatus("Entregue", "Entregue ao dentista");
   };
 
@@ -388,7 +413,7 @@ function DetalheOS({ os, onClose, onChange }: { os: OS; onClose: () => void; onC
               <span className="numeric text-primary">{os.numero}</span>
               <StatusSelo status={os.lab_status} entregueEm={os.entregue_em} />
             </DialogTitle>
-            <Button size="sm" variant="outline" onClick={imprimirFicha}>
+            <Button size="sm" variant="outline" onClick={() => imprimirFicha(os)}>
               <Printer className="size-4" /> Ficha
             </Button>
           </div>
@@ -709,6 +734,15 @@ function fichaBase(titulo: string, os: OS, linhas: string[]): string {
   ${linhas.map((l) => `<div class="row">${l}</div>`).join("")}</div>
   <div class="foot">Emitido em ${new Date().toLocaleString("pt-BR")}</div>
   </body></html>`;
+}
+
+function imprimirFicha(os: OS) {
+  const w = window.open("", "_blank", "width=780,height=900");
+  if (!w) return;
+  w.document.write(fichaHtml(os));
+  w.document.close();
+  w.focus();
+  w.print();
 }
 
 function fichaHtml(os: OS): string {
