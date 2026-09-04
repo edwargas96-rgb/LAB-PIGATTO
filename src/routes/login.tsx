@@ -14,8 +14,8 @@ const WHATSAPP_NUMERO = "5541991071492";
 
 // Mensagem já preenchida na conversa, para a pessoa só apertar enviar.
 const WHATSAPP_MENSAGEM =
-  "Olá! Gostaria de solicitar meu acesso ao portal do LAB PIGATTO " +
-  "para enviar meus trabalhos digitais.";
+  "Olá! Estou com problemas para acessar meu portal do dentista do LAB PIGATTO. " +
+  "Podem me ajudar?";
 
 const WHATSAPP = `https://wa.me/${WHATSAPP_NUMERO}?text=${encodeURIComponent(WHATSAPP_MENSAGEM)}`;
 
