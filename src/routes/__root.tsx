@@ -89,6 +89,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:card", content: "summary" },
       { property: "og:title", content: "LAB PIGATTO" },
       { property: "og:description", content: "Portal de ordens de serviço do LAB PIGATTO." },
+      { property: "og:image", content: "https://portal.pigattoprotese.com.br/og-image.png" },
+      { property: "og:image:width", content: "1448" },
+      { property: "og:image:height", content: "1086" },
+      { name: "twitter:image", content: "https://portal.pigattoprotese.com.br/og-image.png" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
