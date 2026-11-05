@@ -13,6 +13,7 @@ export type OS = {
   paciente: string;
   dentista: string | null;
   item: string | null;
+  material: string | null;
   elementos: number[];
   cor: string | null;
   data_entrega: string;
@@ -30,7 +31,7 @@ export type OS = {
 };
 
 const COLUNAS_OS =
-  "id, numero, paciente, dentista, item, elementos, cor, data_entrega, observacoes, created_at, lab_status, urgencia, convenio, resposta_laboratorio, laboratorio_destino, entregue_em, clinic_id, deleted_at, clinics(nome)";
+  "id, numero, paciente, dentista, item, material, elementos, cor, data_entrega, observacoes, created_at, lab_status, urgencia, convenio, resposta_laboratorio, laboratorio_destino, entregue_em, clinic_id, deleted_at, clinics(nome)";
 
 export function useOrdens() {
   return useQuery({
