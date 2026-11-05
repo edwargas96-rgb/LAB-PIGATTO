@@ -5,6 +5,7 @@ export type OrdemParaFicha = {
   paciente: string;
   dentista: string | null;
   item: string | null;
+  material?: string | null;
   elementos: number[] | null;
   cor: string | null;
   data_entrega: string;
@@ -33,6 +34,7 @@ export function fichaHtml(os: OrdemParaFicha): string {
     `<b>Clínica</b><span>${os.clinics?.nome ?? "—"}</span>`,
     `<b>Dentista</b><span>${os.dentista ?? "—"}</span>`,
     `<b>Trabalho</b><span>${os.item ?? "—"}</span>`,
+    `<b>Material</b><span>${os.material ?? "—"}</span>`,
     `<b>Elementos</b><span>${(os.elementos ?? []).join(", ") || "—"}</span>`,
     `<b>Cor</b><span>${os.cor ?? "—"}</span>`,
     `<b>Entrega</b><span>${formatarData(os.data_entrega)}</span>`,
