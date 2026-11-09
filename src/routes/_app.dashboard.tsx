@@ -1,11 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Plus, Inbox, Hammer, PackageCheck, AlertTriangle } from "lucide-react";
+import { Plus, Inbox, Hammer, PackageCheck, AlertTriangle, Search } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { AppLayout } from "@/components/AppLayout";
 import { StatusBadge, PrazoBadge } from "@/components/StatusBadge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { formatarData, prazoTipo, diasRestantes } from "@/lib/ordens";
 import { obterUltimaVisita, ultimaMensagemDaOutraParte } from "@/lib/mensagens";
 
@@ -38,6 +40,7 @@ type OrdemLista = {
 function Dashboard() {
   const { role, userId } = useAuth();
   const isLab = role === "laboratorio";
+  const [busca, setBusca] = useState("");
 
   const { data: ordens = [], isLoading } = useQuery({
     queryKey: ["ordens"],
@@ -91,6 +94,16 @@ function Dashboard() {
     (o) => prazoTipo(o.data_entrega, o.status, o.entregue_em) === "atrasada",
   ).length;
 
+  const ordensFiltradas = useMemo(() => {
+    const q = busca.trim().toLowerCase();
+    if (!q) return ordens;
+    return ordens.filter((o) =>
+      [o.numero, o.paciente, o.clinics?.nome, o.item]
+        .filter(Boolean)
+        .some((t) => String(t).toLowerCase().includes(q)),
+    );
+  }, [ordens, busca]);
+
   const cards = [
     { label: "Novas", valor: novas, icone: Inbox, cor: "text-primary" },
     { label: "Em produção", valor: producao, icone: Hammer, cor: "text-warning-foreground" },
@@ -131,13 +144,25 @@ function Dashboard() {
         </div>
       )}
 
+      <div className="relative mb-5 max-w-sm">
+        <Search className="absolute top-2.5 left-2.5 size-4 text-muted-foreground" />
+        <Input
+          value={busca}
+          onChange={(e) => setBusca(e.target.value)}
+          placeholder="Buscar O.S., paciente, clínica…"
+          className="pl-8"
+        />
+      </div>
+
       <div className="overflow-hidden rounded-xl border border-border bg-card shadow-[var(--shadow-card)]">
         {isLoading ? (
           <div className="p-8 text-center text-sm text-muted-foreground">Carregando ordens…</div>
-        ) : ordens.length === 0 ? (
+        ) : ordensFiltradas.length === 0 ? (
           <div className="p-10 text-center">
-            <p className="text-sm text-muted-foreground">Nenhuma ordem por aqui ainda.</p>
-            {!isLab && (
+            <p className="text-sm text-muted-foreground">
+              {busca.trim() ? "Nenhuma ordem encontrada." : "Nenhuma ordem por aqui ainda."}
+            </p>
+            {!isLab && !busca.trim() && (
               <Button asChild className="mt-4">
                 <Link to="/nova-ordem">Abrir primeira ordem</Link>
               </Button>
@@ -145,7 +170,7 @@ function Dashboard() {
           </div>
         ) : (
           <ul className="divide-y divide-border">
-            {ordens.map((o) => {
+            {ordensFiltradas.map((o) => {
               const tipo = prazoTipo(o.data_entrega, o.status, o.entregue_em);
               const d = diasRestantes(o.data_entrega);
               const texto =
