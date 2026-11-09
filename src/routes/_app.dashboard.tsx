@@ -8,6 +8,7 @@ import { AppLayout } from "@/components/AppLayout";
 import { StatusBadge, PrazoBadge } from "@/components/StatusBadge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 import { formatarData, prazoTipo, diasRestantes } from "@/lib/ordens";
 import { obterUltimaVisita, ultimaMensagemDaOutraParte } from "@/lib/mensagens";
 
@@ -41,6 +42,7 @@ function Dashboard() {
   const { role, userId } = useAuth();
   const isLab = role === "laboratorio";
   const [busca, setBusca] = useState("");
+  const [filtro, setFiltro] = useState<"Todas" | "Recebidas" | "Entregues">("Todas");
 
   const { data: ordens = [], isLoading } = useQuery({
     queryKey: ["ordens"],
@@ -96,13 +98,15 @@ function Dashboard() {
 
   const ordensFiltradas = useMemo(() => {
     const q = busca.trim().toLowerCase();
-    if (!q) return ordens;
-    return ordens.filter((o) =>
-      [o.numero, o.paciente, o.clinics?.nome, o.item]
+    return ordens.filter((o) => {
+      if (filtro === "Recebidas" && o.entregue_em) return false;
+      if (filtro === "Entregues" && !o.entregue_em) return false;
+      if (!q) return true;
+      return [o.numero, o.paciente, o.clinics?.nome, o.item]
         .filter(Boolean)
-        .some((t) => String(t).toLowerCase().includes(q)),
-    );
-  }, [ordens, busca]);
+        .some((t) => String(t).toLowerCase().includes(q));
+    });
+  }, [ordens, busca, filtro]);
 
   const cards = [
     { label: "Novas", valor: novas, icone: Inbox, cor: "text-primary" },
@@ -144,7 +148,7 @@ function Dashboard() {
         </div>
       )}
 
-      <div className="relative mb-5 max-w-sm">
+      <div className="relative mb-4 max-w-sm">
         <Search className="absolute top-2.5 left-2.5 size-4 text-muted-foreground" />
         <Input
           value={busca}
@@ -154,15 +158,34 @@ function Dashboard() {
         />
       </div>
 
+      <div className="mb-5 flex flex-wrap gap-1.5">
+        {(["Todas", "Recebidas", "Entregues"] as const).map((s) => (
+          <button
+            key={s}
+            onClick={() => setFiltro(s)}
+            className={cn(
+              "rounded-full border px-3 py-1 text-xs font-medium transition-colors",
+              filtro === s
+                ? "border-primary bg-primary text-primary-foreground"
+                : "border-border bg-card text-muted-foreground hover:bg-secondary",
+            )}
+          >
+            {s}
+          </button>
+        ))}
+      </div>
+
       <div className="overflow-hidden rounded-xl border border-border bg-card shadow-[var(--shadow-card)]">
         {isLoading ? (
           <div className="p-8 text-center text-sm text-muted-foreground">Carregando ordens…</div>
         ) : ordensFiltradas.length === 0 ? (
           <div className="p-10 text-center">
             <p className="text-sm text-muted-foreground">
-              {busca.trim() ? "Nenhuma ordem encontrada." : "Nenhuma ordem por aqui ainda."}
+              {busca.trim() || filtro !== "Todas"
+                ? "Nenhuma ordem encontrada."
+                : "Nenhuma ordem por aqui ainda."}
             </p>
-            {!isLab && !busca.trim() && (
+            {!isLab && !busca.trim() && filtro === "Todas" && (
               <Button asChild className="mt-4">
                 <Link to="/nova-ordem">Abrir primeira ordem</Link>
               </Button>
